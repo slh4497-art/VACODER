@@ -258,6 +258,28 @@ body[data-theme="dark"] .result {
   margin-bottom: 12px;
 }
 
+.avatar-wrap {
+  width: 160px;
+  height: 160px;
+  margin: 12px auto 16px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #fff1f8, #f1f7ff);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(47, 35, 50, 0.08);
+  box-shadow: 0 16px 30px rgba(255, 126, 182, 0.22);
+}
+
+body[data-theme="dark"] .avatar-wrap {
+  background: linear-gradient(135deg, #30203a, #1d1827);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+}
+
 .chips {
   display: flex;
   flex-wrap: wrap;
