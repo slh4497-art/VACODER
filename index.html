@@ -9,11 +9,11 @@
 <body>
   <div class="page">
     <header class="hero">
-      <p class="eyebrow">noon decision engine</p>
+      <p class="eyebrow">today's pick engine</p>
       <div class="hero-row">
         <div>
-          <h1>Lunch Menu Picker</h1>
-          <p class="subtitle">A quick, playful way to land on a lunch you can feel good about.</p>
+          <h1>오늘의 남친 고르기</h1>
+          <p class="subtitle">버튼 한 번으로 오늘의 남친을 뽑아보세요.</p>
         </div>
         <button class="ghost toggle" id="themeToggle" type="button" aria-pressed="false">Dark mode</button>
       </div>
@@ -22,114 +22,36 @@
     <main class="grid">
       <section class="panel">
         <div class="panel-header">
-          <h2>Preferences</h2>
-          <button class="ghost" id="resetBtn" type="button">Reset</button>
-        </div>
-
-        <div class="form-grid">
-          <label>
-            Cuisine
-            <select id="cuisineSelect">
-              <option value="any">Any</option>
-              <option value="Korean">Korean</option>
-              <option value="Japanese">Japanese</option>
-              <option value="Chinese">Chinese</option>
-              <option value="Western">Western</option>
-              <option value="Southeast Asian">Southeast Asian</option>
-              <option value="Indian">Indian</option>
-              <option value="Mexican">Mexican</option>
-              <option value="Middle Eastern">Middle Eastern</option>
-              <option value="Salad/Bowl">Salad/Bowl</option>
-              <option value="Sandwich">Sandwich</option>
-              <option value="Noodles">Noodles</option>
-              <option value="Snack">Snack</option>
-            </select>
-          </label>
-
-          <label>
-            Diet
-            <select id="dietSelect">
-              <option value="any">Any</option>
-              <option value="vegetarian">Vegetarian</option>
-              <option value="vegan">Vegan</option>
-              <option value="pescatarian">Pescatarian</option>
-              <option value="no-pork">No Pork</option>
-              <option value="no-beef">No Beef</option>
-              <option value="gluten-light">Gluten-light</option>
-              <option value="dairy-free">Dairy-free</option>
-            </select>
-          </label>
-
-          <label>
-            Budget
-            <select id="budgetSelect">
-              <option value="any">Any</option>
-              <option value="low">Low</option>
-              <option value="mid">Mid</option>
-              <option value="high">High</option>
-            </select>
-          </label>
-
-          <label>
-            Distance
-            <select id="distanceSelect">
-              <option value="any">Any</option>
-              <option value="near">Near (5 min walk)</option>
-              <option value="medium">Medium (10 min walk)</option>
-              <option value="far">Far (15+ min walk)</option>
-              <option value="delivery">Delivery OK</option>
-            </select>
-          </label>
-
-          <label>
-            Vibe
-            <select id="vibeSelect">
-              <option value="any">Any</option>
-              <option value="quick">Quick bite</option>
-              <option value="cozy">Cozy comfort</option>
-              <option value="spicy">Spicy kick</option>
-              <option value="light">Light + fresh</option>
-              <option value="shareable">Shareable</option>
-            </select>
-          </label>
-
-          <label>
-            Time
-            <select id="timeSelect">
-              <option value="any">Any</option>
-              <option value="fast">Fast (under 15m)</option>
-              <option value="medium">Medium (15-25m)</option>
-              <option value="slow">Leisurely (25m+)</option>
-            </select>
-          </label>
+          <h2>선택</h2>
+          <button class="ghost" id="resetBtn" type="button">초기화</button>
         </div>
 
         <div class="actions">
-          <button id="recommendBtn" type="button">Recommend</button>
-          <button class="secondary" id="surpriseBtn" type="button">Surprise me</button>
+          <button id="recommendBtn" type="button">오늘의 남친 뽑기</button>
+          <button class="secondary" id="surpriseBtn" type="button">다시 뽑기</button>
         </div>
       </section>
 
       <section class="panel result-panel">
         <div class="panel-header">
-          <h2>Today&#39;s Pick</h2>
-          <span class="pill" id="matchCount">Ready</span>
+          <h2>오늘의 남친</h2>
+          <span class="pill" id="matchCount">준비 완료</span>
         </div>
         <div class="result" id="resultCard">
-          <h3 id="resultName">Press recommend</h3>
-          <p id="resultDesc">Set a few preferences, or go wild with Surprise me.</p>
+          <h3 id="resultName">버튼을 눌러주세요</h3>
+          <p id="resultDesc">오늘의 남친을 랜덤으로 추천해드려요.</p>
           <div class="chips" id="resultChips"></div>
           <ul class="reasons" id="resultReasons"></ul>
         </div>
         <div class="secondary-panel">
-          <h3>Recent picks</h3>
+          <h3>최근 결과</h3>
           <ul class="history" id="historyList"></ul>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <p>Tip: tweak just one filter if you are stuck. Tiny nudges beat overthinking.</p>
+      <p>Tip: 마음에 안 들면 다시 뽑아보세요.</p>
     </footer>
   </div>
 
