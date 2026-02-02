@@ -20,8 +20,10 @@ const resultChips = document.getElementById("resultChips");
 const resultReasons = document.getElementById("resultReasons");
 const matchCount = document.getElementById("matchCount");
 const historyList = document.getElementById("historyList");
+const resultCard = document.getElementById("resultCard");
 const themeToggle = document.getElementById("themeToggle");
 const THEME_KEY = "vacoder-theme";
+let isRolling = false;
 
 const updateHistory = (candidate) => {
   if (!candidate) return;
@@ -55,14 +57,44 @@ const renderResult = (candidate, count, reasons) => {
 
 const pickRandom = (list) => list[Math.floor(Math.random() * list.length)];
 
+const setRollingState = (rolling) => {
+  isRolling = rolling;
+  resultCard.classList.toggle("rolling", rolling);
+  recommendBtn.disabled = rolling;
+  surpriseBtn.disabled = rolling;
+};
+
+const rollPick = (onDone) => {
+  if (isRolling) return;
+  setRollingState(true);
+  const rollDuration = 1200;
+  const intervalMs = 90;
+  const start = Date.now();
+  const interval = setInterval(() => {
+    const pick = pickRandom(candidates);
+    resultName.textContent = pick.name;
+    resultDesc.textContent = "고르는 중...";
+    matchCount.textContent = `${candidates.length}명 중 선택`;
+    if (Date.now() - start >= rollDuration) {
+      clearInterval(interval);
+      setRollingState(false);
+      onDone();
+    }
+  }, intervalMs);
+};
+
 const recommend = () => {
-  const picked = pickRandom(candidates);
-  renderResult(picked, candidates.length, ["랜덤으로 한 명을 골랐어요."]);
+  rollPick(() => {
+    const picked = pickRandom(candidates);
+    renderResult(picked, candidates.length, ["랜덤으로 한 명을 골랐어요."]);
+  });
 };
 
 const surprise = () => {
-  const picked = pickRandom(candidates);
-  renderResult(picked, candidates.length, ["다시 뽑기 완료!"]);
+  rollPick(() => {
+    const picked = pickRandom(candidates);
+    renderResult(picked, candidates.length, ["다시 뽑기 완료!"]);
+  });
 };
 
 const reset = () => {
