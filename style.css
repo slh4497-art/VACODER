@@ -1,39 +1,41 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@300;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Gaegu:wght@400;700&family=Quicksand:wght@400;600;700&display=swap');
 
 :root {
   color-scheme: light;
-  --bg: #f4efe9;
-  --bg-deep: #e7ddd3;
-  --accent: #ea6a47;
-  --accent-dark: #a94a2c;
-  --ink: #231f20;
-  --muted: #645a54;
-  --panel: #fff7f0;
-  --panel-strong: #fffdfb;
-  --shadow: 0 20px 50px rgba(35, 31, 32, 0.12);
-  --chip-bg: rgba(234, 106, 71, 0.15);
-  --chip-ink: #a94a2c;
-  --pill-bg: rgba(35, 31, 32, 0.08);
-  --panel-border: rgba(35, 31, 32, 0.08);
-  --result-border: rgba(35, 31, 32, 0.12);
+  --bg: #fff0f6;
+  --bg-deep: #f0f4ff;
+  --accent: #ff7eb6;
+  --accent-dark: #ff4f99;
+  --ink: #2f2332;
+  --muted: #6b5b6f;
+  --panel: #ffffff;
+  --panel-strong: #fff8fd;
+  --shadow: 0 20px 50px rgba(98, 61, 105, 0.18);
+  --chip-bg: rgba(255, 126, 182, 0.2);
+  --chip-ink: #b8336a;
+  --pill-bg: rgba(47, 35, 50, 0.08);
+  --panel-border: rgba(47, 35, 50, 0.08);
+  --result-border: rgba(47, 35, 50, 0.14);
+  --glow: rgba(255, 126, 182, 0.4);
 }
 
 body[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #141312;
-  --bg-deep: #0c0b0a;
-  --accent: #ff7a5a;
-  --accent-dark: #ffb199;
-  --ink: #f3eee9;
-  --muted: #b7afa6;
-  --panel: #1f1c1a;
-  --panel-strong: #2a2522;
-  --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-  --chip-bg: rgba(255, 122, 90, 0.2);
-  --chip-ink: #ffd2c6;
-  --pill-bg: rgba(243, 238, 233, 0.14);
-  --panel-border: rgba(255, 255, 255, 0.06);
-  --result-border: rgba(255, 255, 255, 0.12);
+  --bg: #1b1621;
+  --bg-deep: #111018;
+  --accent: #ff8fd1;
+  --accent-dark: #ffb6e3;
+  --ink: #f9f1ff;
+  --muted: #c7b8d3;
+  --panel: #241b2c;
+  --panel-strong: #2c2135;
+  --shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  --chip-bg: rgba(255, 143, 209, 0.2);
+  --chip-ink: #ffd6ef;
+  --pill-bg: rgba(249, 241, 255, 0.14);
+  --panel-border: rgba(255, 255, 255, 0.08);
+  --result-border: rgba(255, 255, 255, 0.14);
+  --glow: rgba(255, 143, 209, 0.35);
 }
 
 * {
@@ -43,15 +45,15 @@ body[data-theme="dark"] {
 }
 
 body {
-  font-family: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
-  background: radial-gradient(circle at top, #fff4e7 0%, var(--bg) 40%, var(--bg-deep) 100%);
+  font-family: "Quicksand", "Helvetica Neue", Arial, sans-serif;
+  background: radial-gradient(circle at top, #ffe5f0 0%, var(--bg) 38%, var(--bg-deep) 100%);
   color: var(--ink);
   min-height: 100vh;
   transition: background 0.3s ease, color 0.3s ease;
 }
 
 body[data-theme="dark"] {
-  background: radial-gradient(circle at top, #2b2220 0%, var(--bg) 35%, var(--bg-deep) 100%);
+  background: radial-gradient(circle at top, #2d1e33 0%, var(--bg) 35%, var(--bg-deep) 100%);
 }
 
 .page {
@@ -119,7 +121,7 @@ body[data-theme="dark"] .page::after {
 }
 
 h1 {
-  font-family: "Fraunces", "Times New Roman", serif;
+  font-family: "DM Serif Display", "Times New Roman", serif;
   font-size: clamp(2.6rem, 6vw, 4.2rem);
   margin-bottom: 12px;
 }
@@ -194,7 +196,7 @@ button {
   background: var(--accent);
   color: white;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 10px 25px rgba(234, 106, 71, 0.3);
+  box-shadow: 0 12px 28px var(--glow);
 }
 
 button:hover {
@@ -202,7 +204,7 @@ button:hover {
 }
 
 button.secondary {
-  background: var(--ink);
+  background: #30233b;
   box-shadow: 0 10px 20px rgba(35, 31, 32, 0.2);
 }
 
@@ -234,7 +236,7 @@ button.ghost {
 }
 
 body[data-theme="dark"] .result {
-  background: #151312;
+  background: #1a1320;
 }
 
 .result.rolling h3 {
@@ -270,6 +272,100 @@ body[data-theme="dark"] .result {
   border-radius: 999px;
   font-size: 0.8rem;
   text-transform: capitalize;
+}
+
+.mascot {
+  margin-top: 22px;
+}
+
+.mascot-card {
+  width: 150px;
+  height: 180px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #ffe2f2, #f0f7ff);
+  display: grid;
+  place-items: center;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(255, 126, 182, 0.25);
+}
+
+body[data-theme="dark"] .mascot-card {
+  background: linear-gradient(135deg, #3a243f, #1f1a2b);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.mascot-head {
+  width: 86px;
+  height: 86px;
+  background: #ffe9d6;
+  border-radius: 35% 35% 40% 40%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  box-shadow: inset 0 -6px 0 rgba(255, 175, 149, 0.5);
+}
+
+.mascot-eye {
+  width: 10px;
+  height: 16px;
+  background: #3a2c35;
+  border-radius: 999px;
+}
+
+.mascot-smile {
+  position: absolute;
+  bottom: 18px;
+  width: 28px;
+  height: 14px;
+  border-bottom: 4px solid #d66a7c;
+  border-radius: 0 0 24px 24px;
+}
+
+.mascot-body {
+  width: 110px;
+  height: 60px;
+  background: #ff9bc8;
+  border-radius: 22px;
+  position: absolute;
+  bottom: 26px;
+  box-shadow: inset 0 -8px 0 rgba(255, 122, 182, 0.6);
+}
+
+.mascot-heart {
+  width: 22px;
+  height: 22px;
+  background: #ff5fa2;
+  position: absolute;
+  right: 26px;
+  top: 22px;
+  transform: rotate(45deg);
+  border-radius: 6px;
+  box-shadow: -7px 7px 0 #ff5fa2;
+}
+
+.mascot-heart::before,
+.mascot-heart::after {
+  content: "";
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #ff5fa2;
+  border-radius: 50%;
+}
+
+.mascot-heart::before {
+  top: -11px;
+  left: 0;
+}
+
+.mascot-heart::after {
+  left: -11px;
+  top: 0;
+}
+
+body[data-theme="dark"] .mascot-head {
+  background: #f4d9cc;
 }
 
 .reasons {
