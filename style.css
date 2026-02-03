@@ -170,6 +170,8 @@ label {
   color: var(--muted);
 }
 
+input,
+textarea,
 select {
   border-radius: 14px;
   border: 1px solid rgba(35, 31, 32, 0.16);
@@ -177,6 +179,34 @@ select {
   font-size: 0.95rem;
   font-family: inherit;
   background: var(--panel-strong);
+  color: var(--ink);
+}
+
+textarea {
+  resize: vertical;
+}
+
+.candidate-form {
+  display: grid;
+  gap: 16px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
 }
 
 .actions {

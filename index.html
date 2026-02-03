@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lunch Menu Picker</title>
+  <title>오늘의 남친 후보 추천 폼</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="page">
     <header class="hero">
-      <p class="eyebrow">today's pick engine</p>
+      <p class="eyebrow">boyfriend candidate form</p>
       <div class="hero-row">
         <div>
-          <h1>오늘의 남친 고르기</h1>
-          <p class="subtitle">버튼 한 번으로 오늘의 남친을 뽑아보세요.</p>
+          <h1>오늘의 남친 후보 추천</h1>
+          <p class="subtitle">간단한 정보를 입력하면 후보 추천이 접수됩니다.</p>
         </div>
-        <button class="ghost toggle" id="themeToggle" type="button" aria-pressed="false">Dark mode</button>
       </div>
       <div class="mascot" aria-hidden="true">
         <div class="mascot-card">
@@ -31,33 +30,70 @@
     </header>
 
     <main class="grid">
-      <section class="panel">
+      <section class="panel form-panel">
         <div class="panel-header">
-          <h2>선택</h2>
-          <button class="ghost" id="resetBtn" type="button">초기화</button>
+          <h2>후보 정보</h2>
+          <span class="pill">Formspree 연동</span>
         </div>
 
-        <div class="actions">
-          <button id="recommendBtn" type="button">오늘의 남친 뽑기</button>
-          <button class="secondary" id="surpriseBtn" type="button">다시 뽑기</button>
-        </div>
+        <form class="candidate-form" action="https://formspree.io/f/mjgozoep" method="POST">
+          <div class="form-grid">
+            <label>
+              후보 이름
+              <input name="name" type="text" placeholder="예: 민수" required />
+            </label>
+            <label>
+              나이
+              <input name="age" type="number" min="18" placeholder="예: 27" required />
+            </label>
+            <label>
+              직업/전공
+              <input name="role" type="text" placeholder="예: 개발자" />
+            </label>
+            <label>
+              매력 포인트
+              <input name="charm" type="text" placeholder="예: 다정함, 유머" />
+            </label>
+            <label>
+              연락 채널
+              <input name="contact" type="text" placeholder="예: 인스타 @love" />
+            </label>
+            <label>
+              지역
+              <input name="location" type="text" placeholder="예: 서울" />
+            </label>
+          </div>
+
+          <label class="full">
+            후보 소개 한마디
+            <textarea name="message" rows="4" placeholder="간단한 자기소개를 남겨주세요."></textarea>
+          </label>
+
+          <label class="full checkbox">
+            <input name="consent" type="checkbox" required />
+            개인정보 제공에 동의합니다.
+          </label>
+
+          <div class="actions">
+            <button type="submit">후보 추천 보내기</button>
+            <button class="secondary" type="reset">작성 내용 지우기</button>
+          </div>
+        </form>
       </section>
 
       <section class="panel result-panel">
         <div class="panel-header">
-          <h2>오늘의 남친</h2>
-          <span class="pill" id="matchCount">준비 완료</span>
+          <h2>작성 안내</h2>
+          <span class="pill">Tip</span>
         </div>
-        <div class="result" id="resultCard">
-          <h3 id="resultName">버튼을 눌러주세요</h3>
-          <p id="resultDesc">오늘의 남친을 랜덤으로 추천해드려요.</p>
-          <div class="avatar-wrap" id="resultAvatar"></div>
-          <div class="chips" id="resultChips"></div>
-          <ul class="reasons" id="resultReasons"></ul>
-        </div>
-        <div class="secondary-panel">
-          <h3>최근 결과</h3>
-          <ul class="history" id="historyList"></ul>
+        <div class="result">
+          <h3>어떤 후보가 인기일까요?</h3>
+          <p>매력 포인트와 소개를 구체적으로 적어주시면 더 좋은 추천이 가능합니다.</p>
+          <ul class="reasons">
+            <li>진짜 사람만 추천해주세요.</li>
+            <li>연락 정보는 본인 동의 하에 작성해주세요.</li>
+            <li>제출 후 수정이 필요하면 다시 제출하세요.</li>
+          </ul>
         </div>
       </section>
     </main>
@@ -67,6 +103,5 @@
     </footer>
   </div>
 
-  <script defer src="/main.js"></script>
 </body>
 </html>
