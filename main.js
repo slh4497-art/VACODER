@@ -1,141 +1,230 @@
-const makeAvatar = (hair, shirt, accent) => `\n<svg class=\"avatar\" viewBox=\"0 0 120 120\" xmlns=\"http://www.w3.org/2000/svg\" aria-hidden=\"true\">\n  <defs>\n    <linearGradient id=\"shirt\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n      <stop offset=\"0\" stop-color=\"${shirt}\" />\n      <stop offset=\"1\" stop-color=\"${accent}\" />\n    </linearGradient>\n  </defs>\n  <rect x=\"14\" y=\"22\" width=\"92\" height=\"92\" rx=\"36\" fill=\"#ffe9d6\" />\n  <path d=\"M24 56c8-20 64-22 72 0v12H24z\" fill=\"${hair}\" />\n  <circle cx=\"45\" cy=\"64\" r=\"6\" fill=\"#3a2c35\" />\n  <circle cx=\"75\" cy=\"64\" r=\"6\" fill=\"#3a2c35\" />\n  <path d=\"M46 82c10 8 18 8 28 0\" stroke=\"#d66a7c\" stroke-width=\"4\" fill=\"none\" stroke-linecap=\"round\" />\n  <rect x=\"28\" y=\"88\" width=\"64\" height=\"26\" rx=\"13\" fill=\"url(#shirt)\" />\n  <circle cx=\"28\" cy=\"92\" r=\"6\" fill=\"${accent}\" />\n</svg>`;
+const MODEL_KEY = "tm-model-url";
 
-const candidates = [
-  { name: "서호", notes: "오늘의 남친으로 추천합니다.", avatar: makeAvatar("#5b3a3f", "#ff9bc8", "#ff5fa2") },
-  { name: "세영", notes: "오늘의 남친으로 추천합니다.", avatar: makeAvatar("#3a2c35", "#8bd3ff", "#5fb5ff") },
-  { name: "경찬", notes: "오늘의 남친으로 추천합니다.", avatar: makeAvatar("#6a4b3f", "#b5f3c7", "#7ed9a2") },
-  { name: "정희", notes: "오늘의 남친으로 추천합니다.", avatar: makeAvatar("#4a3c58", "#ffd7a3", "#ffb870") },
-  { name: "지호", notes: "오늘의 남친으로 추천합니다.", avatar: makeAvatar("#2f2a3a", "#cdb7ff", "#a98bff") },
-  { name: "인태", notes: "오늘의 남친으로 추천합니다.", avatar: makeAvatar("#3b3b3b", "#ffb3d9", "#ff8fc4") },
-  { name: "석준", notes: "오늘의 남친으로 추천합니다.", avatar: makeAvatar("#5a4b40", "#9be7ff", "#6ccfff") }
-];
+const modelUrlInput = document.getElementById("modelUrlInput");
+const loadModelBtn = document.getElementById("loadModelBtn");
+const resetModelBtn = document.getElementById("resetModelBtn");
+const startCamBtn = document.getElementById("startCamBtn");
+const stopCamBtn = document.getElementById("stopCamBtn");
+const playBtn = document.getElementById("playBtn");
+const resetScoreBtn = document.getElementById("resetScoreBtn");
+const statusText = document.getElementById("statusText");
+const cameraWrap = document.getElementById("cameraWrap");
+const predictionText = document.getElementById("predictionText");
+const playerChoice = document.getElementById("playerChoice");
+const aiChoice = document.getElementById("aiChoice");
+const roundResult = document.getElementById("roundResult");
+const playerScore = document.getElementById("playerScore");
+const aiScore = document.getElementById("aiScore");
+const drawScore = document.getElementById("drawScore");
 
-const historyLimit = 5;
-const history = [];
+let model = null;
+let webcam = null;
+let isCamRunning = false;
+let currentPrediction = null;
+let animationFrame = null;
 
-const recommendBtn = document.getElementById("recommendBtn");
-const surpriseBtn = document.getElementById("surpriseBtn");
-const resetBtn = document.getElementById("resetBtn");
-const resultName = document.getElementById("resultName");
-const resultDesc = document.getElementById("resultDesc");
-const resultChips = document.getElementById("resultChips");
-const resultReasons = document.getElementById("resultReasons");
-const matchCount = document.getElementById("matchCount");
-const historyList = document.getElementById("historyList");
-const resultCard = document.getElementById("resultCard");
-const resultAvatar = document.getElementById("resultAvatar");
-const themeToggle = document.getElementById("themeToggle");
-const THEME_KEY = "vacoder-theme";
-let isRolling = false;
+const scores = { player: 0, ai: 0, draw: 0 };
 
-const updateHistory = (candidate) => {
-  if (!candidate) return;
-  history.unshift(candidate.name);
-  const unique = [...new Set(history)].slice(0, historyLimit);
-  history.length = 0;
-  history.push(...unique);
-  historyList.innerHTML = "";
-  history.forEach((item) => {
-    const li = document.createElement("li");
-    li.textContent = item;
-    historyList.appendChild(li);
-  });
+const CHOICE_MAP = {
+  rock: "바위",
+  paper: "보",
+  scissors: "가위"
 };
 
-const renderResult = (candidate, count, reasons) => {
-  resultName.textContent = candidate.name;
-  resultDesc.textContent = candidate.notes;
-  resultChips.innerHTML = "";
-  resultAvatar.innerHTML = candidate.avatar;
-
-  resultReasons.innerHTML = "";
-  reasons.forEach((reason) => {
-    const li = document.createElement("li");
-    li.textContent = reason;
-    resultReasons.appendChild(li);
-  });
-
-  matchCount.textContent = `${count}명 중 선택`;
-  updateHistory(candidate);
+const normalizeLabel = (label) => {
+  if (!label) return null;
+  const text = label.toLowerCase().replace(/\s/g, "");
+  if (text.includes("rock") || text.includes("바위")) return "rock";
+  if (text.includes("paper") || text.includes("보")) return "paper";
+  if (text.includes("scissors") || text.includes("가위")) return "scissors";
+  return null;
 };
 
-const pickRandom = (list) => list[Math.floor(Math.random() * list.length)];
-
-const setRollingState = (rolling) => {
-  isRolling = rolling;
-  resultCard.classList.toggle("rolling", rolling);
-  recommendBtn.disabled = rolling;
-  surpriseBtn.disabled = rolling;
+const setStatus = (text, isError = false) => {
+  statusText.textContent = text;
+  statusText.dataset.error = isError ? "true" : "false";
 };
 
-const rollPick = (onDone) => {
-  if (isRolling) return;
-  setRollingState(true);
-  const rollDuration = 1200;
-  const intervalMs = 90;
-  const start = Date.now();
-  const interval = setInterval(() => {
-    const pick = pickRandom(candidates);
-    resultName.textContent = pick.name;
-    resultDesc.textContent = "고르는 중...";
-    resultAvatar.innerHTML = pick.avatar;
-    matchCount.textContent = `${candidates.length}명 중 선택`;
-    if (Date.now() - start >= rollDuration) {
-      clearInterval(interval);
-      setRollingState(false);
-      onDone();
-    }
-  }, intervalMs);
-};
-
-const recommend = () => {
-  rollPick(() => {
-    const picked = pickRandom(candidates);
-    renderResult(picked, candidates.length, ["랜덤으로 한 명을 골랐어요."]);
-  });
-};
-
-const surprise = () => {
-  rollPick(() => {
-    const picked = pickRandom(candidates);
-    renderResult(picked, candidates.length, ["다시 뽑기 완료!"]);
-  });
-};
-
-const reset = () => {
-  matchCount.textContent = "준비 완료";
-  resultName.textContent = "버튼을 눌러주세요";
-  resultDesc.textContent = "오늘의 남친을 랜덤으로 추천해드려요.";
-  resultChips.innerHTML = "";
-  resultAvatar.innerHTML = "";
-  resultReasons.innerHTML = "";
-};
-
-recommendBtn.addEventListener("click", recommend);
-surpriseBtn.addEventListener("click", surprise);
-resetBtn.addEventListener("click", reset);
-
-const applyTheme = (theme) => {
-  const isDark = theme === "dark";
-  document.body.dataset.theme = isDark ? "dark" : "light";
-  themeToggle.setAttribute("aria-pressed", String(isDark));
-  themeToggle.textContent = isDark ? "Light mode" : "Dark mode";
-};
-
-const initTheme = () => {
-  const stored = localStorage.getItem(THEME_KEY);
-  if (stored === "light" || stored === "dark") {
-    applyTheme(stored);
+const setPrediction = (label, prob) => {
+  if (!label) {
+    predictionText.textContent = "현재 인식: -";
     return;
   }
-  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  applyTheme(prefersDark ? "dark" : "light");
+  const percent = prob ? ` (${Math.round(prob * 100)}%)` : "";
+  predictionText.textContent = `현재 인식: ${label}${percent}`;
 };
 
-themeToggle.addEventListener("click", () => {
-  const next = document.body.dataset.theme === "dark" ? "light" : "dark";
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next);
+const updateScores = () => {
+  playerScore.textContent = scores.player;
+  aiScore.textContent = scores.ai;
+  drawScore.textContent = scores.draw;
+};
+
+const updateRoundResult = (title, message) => {
+  roundResult.innerHTML = `<h3>${title}</h3><p>${message}</p>`;
+};
+
+const sanitizeModelUrl = (url) => {
+  if (!url) return "";
+  let clean = url.trim();
+  if (!clean.endsWith("/")) {
+    clean += "/";
+  }
+  return clean;
+};
+
+const loadModel = async () => {
+  const url = sanitizeModelUrl(modelUrlInput.value);
+  if (!url) {
+    setStatus("모델 URL을 입력해주세요.", true);
+    return;
+  }
+  setStatus("모델을 불러오는 중...");
+  loadModelBtn.disabled = true;
+  try {
+    model = await tmImage.load(`${url}model.json`, `${url}metadata.json`);
+    localStorage.setItem(MODEL_KEY, url);
+    setStatus("모델 연결 완료! 이제 웹캠을 켜세요.");
+    startCamBtn.disabled = false;
+  } catch (error) {
+    setStatus("모델을 불러오지 못했어요. URL을 다시 확인해주세요.", true);
+    console.error(error);
+  } finally {
+    loadModelBtn.disabled = false;
+  }
+};
+
+const setupWebcam = async () => {
+  if (!model) {
+    setStatus("모델을 먼저 불러오세요.", true);
+    return;
+  }
+  if (isCamRunning) return;
+  setStatus("웹캠을 준비 중...");
+  try {
+    webcam = new tmImage.Webcam(240, 180, true);
+    await webcam.setup();
+    await webcam.play();
+    isCamRunning = true;
+    cameraWrap.innerHTML = "";
+    cameraWrap.appendChild(webcam.canvas);
+    startCamBtn.disabled = true;
+    stopCamBtn.disabled = false;
+    playBtn.disabled = false;
+    setStatus("웹캠이 켜졌어요. 한 판을 눌러주세요!");
+    loop();
+  } catch (error) {
+    setStatus("웹캠 접근이 거부되었어요.", true);
+    console.error(error);
+  }
+};
+
+const stopWebcam = () => {
+  if (!webcam || !isCamRunning) return;
+  webcam.stop();
+  isCamRunning = false;
+  cancelAnimationFrame(animationFrame);
+  startCamBtn.disabled = false;
+  stopCamBtn.disabled = true;
+  playBtn.disabled = true;
+  setPrediction(null);
+  setStatus("웹캠이 꺼졌어요.");
+  cameraWrap.innerHTML = `
+    <div class="camera-placeholder">
+      <p>웹캠 화면</p>
+      <small>권한을 허용해주세요.</small>
+    </div>
+  `;
+};
+
+const loop = async () => {
+  if (!isCamRunning) return;
+  webcam.update();
+  const prediction = await model.predict(webcam.canvas);
+  const best = prediction.reduce((acc, cur) => (cur.probability > acc.probability ? cur : acc));
+  const normalized = normalizeLabel(best.className);
+  currentPrediction = normalized ? { key: normalized, prob: best.probability } : null;
+  setPrediction(normalized ? CHOICE_MAP[normalized] : "알 수 없음", best.probability);
+  animationFrame = requestAnimationFrame(loop);
+};
+
+const pickAiChoice = () => {
+  const options = ["rock", "paper", "scissors"];
+  return options[Math.floor(Math.random() * options.length)];
+};
+
+const judge = (player, ai) => {
+  if (player === ai) return "draw";
+  if (
+    (player === "rock" && ai === "scissors") ||
+    (player === "paper" && ai === "rock") ||
+    (player === "scissors" && ai === "paper")
+  ) {
+    return "player";
+  }
+  return "ai";
+};
+
+const playRound = () => {
+  if (!currentPrediction) {
+    updateRoundResult("손 모양이 없어요", "카메라에 가위/바위/보를 보여주세요.");
+    return;
+  }
+  const playerPick = currentPrediction.key;
+  const aiPick = pickAiChoice();
+  const result = judge(playerPick, aiPick);
+
+  playerChoice.textContent = CHOICE_MAP[playerPick];
+  aiChoice.textContent = CHOICE_MAP[aiPick];
+
+  if (result === "player") {
+    scores.player += 1;
+    updateRoundResult("승리!", "AI를 이겼어요 🎉");
+  } else if (result === "ai") {
+    scores.ai += 1;
+    updateRoundResult("패배", "다음 판에 다시 도전! 💪");
+  } else {
+    scores.draw += 1;
+    updateRoundResult("무승부", "다시 한 판 해볼까요?");
+  }
+
+  updateScores();
+};
+
+const resetScore = () => {
+  scores.player = 0;
+  scores.ai = 0;
+  scores.draw = 0;
+  updateScores();
+  playerChoice.textContent = "-";
+  aiChoice.textContent = "-";
+  updateRoundResult("준비 완료", "가위/바위/보를 보여주세요.");
+};
+
+const initModelUrl = () => {
+  const stored = localStorage.getItem(MODEL_KEY);
+  if (stored) {
+    modelUrlInput.value = stored;
+  }
+};
+
+loadModelBtn.addEventListener("click", loadModel);
+resetModelBtn.addEventListener("click", () => {
+  modelUrlInput.value = "";
+  localStorage.removeItem(MODEL_KEY);
+  setStatus("URL을 초기화했어요.");
+});
+startCamBtn.addEventListener("click", setupWebcam);
+stopCamBtn.addEventListener("click", stopWebcam);
+playBtn.addEventListener("click", playRound);
+resetScoreBtn.addEventListener("click", resetScore);
+
+window.addEventListener("beforeunload", () => {
+  if (webcam && isCamRunning) {
+    webcam.stop();
+  }
 });
 
-initTheme();
+initModelUrl();
+updateScores();
+resetScore();

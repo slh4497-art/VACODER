@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,57 +29,123 @@
       </div>
     </header>
 
-    <main class="grid">
-      <section class="panel form-panel">
-        <div class="panel-header">
-          <h2>후보 정보</h2>
-          <span class="pill">Formspree 연동</span>
-        </div>
-
-        <form class="candidate-form" action="https://formspree.io/f/mjgozoep" method="POST">
-          <div class="form-grid">
-            <label>
-              후보 이름
-              <input name="name" type="text" placeholder="예: 민수" required />
-            </label>
-            <label>
-              나이
-              <input name="age" type="number" min="18" placeholder="예: 27" required />
-            </label>
-            <label>
-              직업/전공
-              <input name="role" type="text" placeholder="예: 개발자" />
-            </label>
-            <label>
-              매력 포인트
-              <input name="charm" type="text" placeholder="예: 다정함, 유머" />
-            </label>
-            <label>
-              연락 채널
-              <input name="contact" type="text" placeholder="예: 인스타 @love" />
-            </label>
-            <label>
-              지역
-              <input name="location" type="text" placeholder="예: 서울" />
-            </label>
+    <main class="grid two-column">
+      <div class="column">
+        <section class="panel mini-game-panel">
+          <div class="panel-header">
+            <h2>가위바위보 미니게임</h2>
+            <span class="pill">AI 위젯</span>
           </div>
-
-          <label class="full">
-            후보 소개 한마디
-            <textarea name="message" rows="4" placeholder="간단한 자기소개를 남겨주세요."></textarea>
+          <label>
+            모델 URL
+            <input id="modelUrlInput" type="url" placeholder="https://teachablemachine.withgoogle.com/models/XXXX/" />
           </label>
-
-          <label class="full checkbox">
-            <input name="consent" type="checkbox" required />
-            개인정보 제공에 동의합니다.
-          </label>
-
           <div class="actions">
-            <button type="submit">후보 추천 보내기</button>
-            <button class="secondary" type="reset">작성 내용 지우기</button>
+            <button id="loadModelBtn" type="button">모델 불러오기</button>
+            <button class="secondary" id="resetModelBtn" type="button">URL 초기화</button>
           </div>
-        </form>
-      </section>
+          <div class="actions">
+            <button id="startCamBtn" type="button" disabled>웹캠 켜기</button>
+            <button class="secondary" id="stopCamBtn" type="button" disabled>웹캠 끄기</button>
+          </div>
+          <div class="actions">
+            <button id="playBtn" type="button" disabled>한 판!</button>
+            <button class="secondary" id="resetScoreBtn" type="button">스코어 초기화</button>
+          </div>
+          <p class="helper" id="statusText">모델을 불러오고 웹캠을 켜면 시작할 수 있어요.</p>
+
+          <div class="mini-game">
+            <div class="camera-wrap" id="cameraWrap">
+              <div class="camera-placeholder">
+                <p>웹캠 화면</p>
+                <small>권한을 허용해주세요.</small>
+              </div>
+            </div>
+            <div class="mini-board">
+              <div class="score compact">
+                <div>
+                  <p class="score-label">나</p>
+                  <span id="playerScore">0</span>
+                </div>
+                <div>
+                  <p class="score-label">AI</p>
+                  <span id="aiScore">0</span>
+                </div>
+                <div>
+                  <p class="score-label">무승부</p>
+                  <span id="drawScore">0</span>
+                </div>
+              </div>
+              <div class="choice-row">
+                <div>
+                  <p class="score-label">내 손</p>
+                  <strong id="playerChoice">-</strong>
+                </div>
+                <div>
+                  <p class="score-label">AI 손</p>
+                  <strong id="aiChoice">-</strong>
+                </div>
+              </div>
+              <div class="result mini-result" id="roundResult">
+                <h3>준비 완료</h3>
+                <p>가위/바위/보를 보여주세요.</p>
+              </div>
+              <div class="prediction" id="predictionText">현재 인식: -</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel form-panel">
+          <div class="panel-header">
+            <h2>후보 정보</h2>
+            <span class="pill">Formspree 연동</span>
+          </div>
+
+          <form class="candidate-form" action="https://formspree.io/f/mjgozoep" method="POST">
+            <div class="form-grid">
+              <label>
+                후보 이름
+                <input name="name" type="text" placeholder="예: 민수" required />
+              </label>
+              <label>
+                나이
+                <input name="age" type="number" min="18" placeholder="예: 27" required />
+              </label>
+              <label>
+                직업/전공
+                <input name="role" type="text" placeholder="예: 개발자" />
+              </label>
+              <label>
+                매력 포인트
+                <input name="charm" type="text" placeholder="예: 다정함, 유머" />
+              </label>
+              <label>
+                연락 채널
+                <input name="contact" type="text" placeholder="예: 인스타 @love" />
+              </label>
+              <label>
+                지역
+                <input name="location" type="text" placeholder="예: 서울" />
+              </label>
+            </div>
+
+            <label class="full">
+              후보 소개 한마디
+              <textarea name="message" rows="4" placeholder="간단한 자기소개를 남겨주세요."></textarea>
+            </label>
+
+            <label class="full checkbox">
+              <input name="consent" type="checkbox" required />
+              개인정보 제공에 동의합니다.
+            </label>
+
+            <div class="actions">
+              <button type="submit">후보 추천 보내기</button>
+              <button class="secondary" type="reset">작성 내용 지우기</button>
+            </div>
+          </form>
+        </section>
+      </div>
 
       <section class="panel result-panel">
         <div class="panel-header">
@@ -129,5 +195,8 @@
     </section>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.18.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.5/dist/teachablemachine-image.min.js"></script>
+  <script src="/main.js"></script>
 </body>
 </html>
