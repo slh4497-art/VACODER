@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>오늘의 남친 후보 추천 폼</title>
+  <title>즉석 셀피 어울림 찾기</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="page">
     <header class="hero">
-      <p class="eyebrow">boyfriend candidate form</p>
+      <p class="eyebrow">selfie vibe match</p>
       <div class="hero-row">
         <div>
-          <h1>오늘의 남친 후보 추천</h1>
-          <p class="subtitle">간단한 정보를 입력하면 후보 추천이 접수됩니다.</p>
+          <h1>즉석 셀피 어울림 찾기</h1>
+          <p class="subtitle">지금 찍은 셀피로, 가장 분위기가 잘 맞는 사람의 사진만 보여줍니다.</p>
         </div>
       </div>
       <div class="mascot" aria-hidden="true">
@@ -30,106 +30,137 @@
     </header>
 
     <main class="grid two-column">
-      <div class="column">
-        <section class="panel form-panel">
-          <div class="panel-header">
-            <h2>후보 정보</h2>
-            <span class="pill">Formspree 연동</span>
+      <section class="panel capture-panel">
+        <div class="panel-header">
+          <h2>즉석 셀피 제출</h2>
+          <span class="pill">WebCam Only</span>
+        </div>
+
+        <div class="camera-grid">
+          <div class="camera-wrap" id="cameraWrap">
+            <div class="camera-placeholder">
+              <p>웹캠 화면</p>
+              <small>권한을 허용해주세요.</small>
+            </div>
+          </div>
+          <div class="capture-meta">
+            <div class="chip-row">
+              <span class="chip">파일 업로드 금지</span>
+              <span class="chip">즉석 촬영 확인</span>
+            </div>
+            <div class="helper" id="livenessHint">랜덤 동작을 수행하고 3초 내에 인증을 완료하세요.</div>
+            <div class="actions">
+              <button id="startCamBtn" type="button">웹캠 켜기</button>
+              <button class="secondary" id="stopCamBtn" type="button" disabled>웹캠 끄기</button>
+            </div>
+            <div class="actions">
+              <button id="livenessBtn" type="button" disabled>즉석 촬영 인증</button>
+              <button class="secondary" id="captureBtn" type="button" disabled>셀피 찍기</button>
+            </div>
+            <div class="status" id="livenessStatus">웹캠을 켜면 랜덤 동작이 표시됩니다.</div>
+            <div class="challenge" id="challengeText">-</div>
+          </div>
+        </div>
+
+        <form class="candidate-form" id="submitForm">
+          <div class="form-grid">
+            <label>
+              내 성별
+              <select name="selfGender" id="selfGender" required>
+                <option value="">선택</option>
+                <option value="female">여성</option>
+                <option value="male">남성</option>
+                <option value="nonbinary">기타</option>
+              </select>
+            </label>
+            <label>
+              원하는 상대 성별
+              <select name="targetGender" id="targetGender" required>
+                <option value="">선택</option>
+                <option value="female">여성</option>
+                <option value="male">남성</option>
+                <option value="any">무관</option>
+              </select>
+            </label>
+            <label>
+              찾는 범위
+              <select name="scope" id="scopeSelect" required>
+                <option value="global">전세계</option>
+                <option value="continent">특정 대륙</option>
+                <option value="country">특정 국가</option>
+              </select>
+            </label>
+            <label id="selfContinentWrap" class="hidden">
+              내 소속 대륙
+              <select name="selfContinent" id="selfContinent">
+                <option value="">선택</option>
+              </select>
+            </label>
+            <label id="selfCountryWrap" class="hidden">
+              내 소속 국가
+              <select name="selfCountry" id="selfCountry">
+                <option value="">선택</option>
+              </select>
+            </label>
+            <label id="targetContinentWrap" class="hidden">
+              찾을 대륙
+              <select name="targetContinent" id="targetContinent">
+                <option value="">선택</option>
+              </select>
+            </label>
+            <label id="targetCountryWrap" class="hidden">
+              찾을 국가
+              <select name="targetCountry" id="targetCountry">
+                <option value="">선택</option>
+              </select>
+            </label>
           </div>
 
-          <form class="candidate-form" action="https://formspree.io/f/mjgozoep" method="POST">
-            <div class="form-grid">
-              <label>
-                후보 이름
-                <input name="name" type="text" placeholder="예: 민수" required />
-              </label>
-              <label>
-                나이
-                <input name="age" type="number" min="18" placeholder="예: 27" required />
-              </label>
-              <label>
-                직업/전공
-                <input name="role" type="text" placeholder="예: 개발자" />
-              </label>
-              <label>
-                매력 포인트
-                <input name="charm" type="text" placeholder="예: 다정함, 유머" />
-              </label>
-              <label>
-                연락 채널
-                <input name="contact" type="text" placeholder="예: 인스타 @love" />
-              </label>
-              <label>
-                지역
-                <input name="location" type="text" placeholder="예: 서울" />
-              </label>
-            </div>
+          <label class="full checkbox">
+            <input name="consent" type="checkbox" required />
+            즉석 촬영 및 데이터 처리에 동의합니다.
+          </label>
 
-            <label class="full">
-              후보 소개 한마디
-              <textarea name="message" rows="4" placeholder="간단한 자기소개를 남겨주세요."></textarea>
-            </label>
-
-            <label class="full checkbox">
-              <input name="consent" type="checkbox" required />
-              개인정보 제공에 동의합니다.
-            </label>
-
-            <div class="actions">
-              <button type="submit">후보 추천 보내기</button>
-              <button class="secondary" type="reset">작성 내용 지우기</button>
-            </div>
-          </form>
-        </section>
-      </div>
+          <div class="actions">
+            <button type="submit" id="submitBtn" disabled>셀피 제출하기</button>
+            <button class="secondary" type="button" id="resetBtn">입력 초기화</button>
+          </div>
+        </form>
+      </section>
 
       <section class="panel result-panel">
         <div class="panel-header">
-          <h2>작성 안내</h2>
-          <span class="pill">Tip</span>
+          <h2>어울림 결과</h2>
+          <span class="pill">Top 1</span>
         </div>
-        <div class="result">
-          <h3>어떤 후보가 인기일까요?</h3>
-          <p>매력 포인트와 소개를 구체적으로 적어주시면 더 좋은 추천이 가능합니다.</p>
-          <ul class="reasons">
-            <li>진짜 사람만 추천해주세요.</li>
-            <li>연락 정보는 본인 동의 하에 작성해주세요.</li>
-            <li>제출 후 수정이 필요하면 다시 제출하세요.</li>
-          </ul>
+        <div class="result" id="resultCard">
+          <h3>아직 제출된 셀피가 없어요</h3>
+          <p>즉석 촬영 인증을 완료하고 셀피를 제출해 주세요.</p>
+          <div class="result-photo" id="resultPhoto">
+            <span>결과 사진</span>
+          </div>
+          <div class="result-meta" id="resultMeta">
+            <div>대상 성별: -</div>
+            <div>대상 지역: -</div>
+            <div>유사도 점수: -</div>
+          </div>
+        </div>
+        <div class="note">
+          <strong>알림:</strong> 국가/대륙은 제출자가 선택한 정보이며, 사진만으로 국가를 판별할 수 없습니다.
+        </div>
+        <div class="history-panel">
+          <h3>저장된 셀피</h3>
+          <p class="muted">최대 50장까지 저장됩니다.</p>
+          <div class="history" id="historyList"></div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <p>Tip: 마음에 안 들면 다시 뽑아보세요.</p>
+      <p>프로토타입: 즉석 촬영 확인은 보조 지표이며 완벽한 보장은 아닙니다.</p>
     </footer>
-
-    <section class="panel disqus-panel">
-      <div class="panel-header">
-        <h2>댓글</h2>
-        <span class="pill">Disqus</span>
-      </div>
-      <div id="disqus_thread"></div>
-      <script>
-        /**
-        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-        /*
-        var disqus_config = function () {
-        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-        };
-        */
-        (function() { // DON'T EDIT BELOW THIS LINE
-        var d = document, s = d.createElement('script');
-        s.src = 'https://vacoder.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-        })();
-      </script>
-      <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    </section>
   </div>
 
+  <script src="/main.js"></script>
 </body>
 </html>
