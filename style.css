@@ -108,6 +108,18 @@ body[data-theme="dark"] .page::after {
   flex-wrap: wrap;
 }
 
+.lang-select {
+  display: grid;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  min-width: 160px;
+}
+
+.lang-select select {
+  padding: 8px 10px;
+}
+
 .toggle {
   min-width: 120px;
 }

@@ -3,18 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>즉석 셀피 어울림 찾기</title>
+  <title>바이브픽</title>
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="page">
     <header class="hero">
-      <p class="eyebrow">selfie vibe match</p>
+      <p class="eyebrow" data-i18n="eyebrow">selfie vibe match</p>
       <div class="hero-row">
         <div>
-          <h1>즉석 셀피 어울림 찾기</h1>
-          <p class="subtitle">지금 찍은 셀피로, 가장 분위기가 잘 맞는 사람의 사진만 보여줍니다.</p>
+          <h1 data-i18n="heroTitle">바이브픽</h1>
+          <p class="subtitle" data-i18n="heroSubtitle">지금 찍은 셀피로, 분위기 찰떡인 사진만 보여줘요.</p>
         </div>
+        <label class="lang-select">
+          <span data-i18n="languageLabel">언어</span>
+          <select id="languageSelect" aria-label="Language">
+            <option value="ko">한국어</option>
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+            <option value="es">Español</option>
+          </select>
+        </label>
       </div>
       <div class="mascot" aria-hidden="true">
         <div class="mascot-card">
@@ -32,32 +41,32 @@
     <main class="grid two-column">
       <section class="panel capture-panel">
         <div class="panel-header">
-          <h2>즉석 셀피 제출</h2>
-          <span class="pill">WebCam Only</span>
+          <h2 data-i18n="captureTitle">즉석 셀피 제출</h2>
+          <span class="pill" data-i18n="capturePill">WebCam Only</span>
         </div>
 
         <div class="camera-grid">
           <div class="camera-wrap" id="cameraWrap">
             <div class="camera-placeholder">
-              <p>웹캠 화면</p>
-              <small>권한을 허용해주세요.</small>
+              <p data-i18n="cameraPlaceholder">웹캠 화면</p>
+              <small data-i18n="cameraHelp">권한을 허용해주세요.</small>
             </div>
           </div>
           <div class="capture-meta">
             <div class="chip-row">
-              <span class="chip">파일 업로드 금지</span>
-              <span class="chip">즉석 촬영 확인</span>
+              <span class="chip" data-i18n="chipNoUpload">파일 업로드 금지</span>
+              <span class="chip" data-i18n="chipLiveness">즉석 촬영 확인</span>
             </div>
-            <div class="helper" id="livenessHint">랜덤 동작을 수행하고 3초 내에 인증을 완료하세요.</div>
+            <div class="helper" id="livenessHint" data-i18n="livenessHint">랜덤 동작을 수행하고 3초 내에 인증을 완료하세요.</div>
             <div class="actions">
-              <button id="startCamBtn" type="button">웹캠 켜기</button>
-              <button class="secondary" id="stopCamBtn" type="button" disabled>웹캠 끄기</button>
+              <button id="startCamBtn" type="button" data-i18n="startCam">웹캠 켜기</button>
+              <button class="secondary" id="stopCamBtn" type="button" disabled data-i18n="stopCam">웹캠 끄기</button>
             </div>
             <div class="actions">
-              <button id="livenessBtn" type="button" disabled>즉석 촬영 인증</button>
-              <button class="secondary" id="captureBtn" type="button" disabled>셀피 찍기</button>
+              <button id="livenessBtn" type="button" disabled data-i18n="livenessBtn">즉석 촬영 인증</button>
+              <button class="secondary" id="captureBtn" type="button" disabled data-i18n="captureBtn">셀피 찍기</button>
             </div>
-            <div class="status" id="livenessStatus">웹캠을 켜면 랜덤 동작이 표시됩니다.</div>
+            <div class="status" id="livenessStatus" data-i18n="livenessStatus">웹캠을 켜면 랜덤 동작이 표시됩니다.</div>
             <div class="challenge" id="challengeText">-</div>
           </div>
         </div>
@@ -65,99 +74,100 @@
         <form class="candidate-form" id="submitForm">
           <div class="form-grid">
             <label>
-              내 성별
+              <span data-i18n="selfGender">내 성별</span>
               <select name="selfGender" id="selfGender" required>
-                <option value="">선택</option>
-                <option value="female">여성</option>
-                <option value="male">남성</option>
-                <option value="nonbinary">기타</option>
+                <option value="" data-i18n="selectPlaceholder">선택</option>
+                <option value="female" data-i18n="genderFemale">여성</option>
+                <option value="male" data-i18n="genderMale">남성</option>
+                <option value="nonbinary" data-i18n="genderOther">기타</option>
               </select>
             </label>
             <label>
-              원하는 상대 성별
+              <span data-i18n="targetGender">원하는 상대 성별</span>
               <select name="targetGender" id="targetGender" required>
-                <option value="">선택</option>
-                <option value="female">여성</option>
-                <option value="male">남성</option>
-                <option value="any">무관</option>
+                <option value="" data-i18n="selectPlaceholder">선택</option>
+                <option value="female" data-i18n="genderFemale">여성</option>
+                <option value="male" data-i18n="genderMale">남성</option>
+                <option value="any" data-i18n="genderAny">무관</option>
               </select>
             </label>
             <label>
-              찾는 범위
+              <span data-i18n="scopeLabel">찾는 범위</span>
               <select name="scope" id="scopeSelect" required>
-                <option value="global">전세계</option>
-                <option value="continent">특정 대륙</option>
-                <option value="country">특정 국가</option>
+                <option value="global" data-i18n="scopeGlobal">전세계</option>
+                <option value="continent" data-i18n="scopeContinent">특정 대륙</option>
+                <option value="country" data-i18n="scopeCountry">특정 국가</option>
               </select>
             </label>
             <label id="selfContinentWrap" class="hidden">
-              내 소속 대륙
+              <span data-i18n="selfContinent">내 소속 대륙</span>
               <select name="selfContinent" id="selfContinent">
-                <option value="">선택</option>
+                <option value="" data-i18n="selectPlaceholder">선택</option>
               </select>
             </label>
             <label id="selfCountryWrap" class="hidden">
-              내 소속 국가
+              <span data-i18n="selfCountry">내 소속 국가</span>
               <select name="selfCountry" id="selfCountry">
-                <option value="">선택</option>
+                <option value="" data-i18n="selectPlaceholder">선택</option>
               </select>
             </label>
             <label id="targetContinentWrap" class="hidden">
-              찾을 대륙
+              <span data-i18n="targetContinent">찾을 대륙</span>
               <select name="targetContinent" id="targetContinent">
-                <option value="">선택</option>
+                <option value="" data-i18n="selectPlaceholder">선택</option>
               </select>
             </label>
             <label id="targetCountryWrap" class="hidden">
-              찾을 국가
+              <span data-i18n="targetCountry">찾을 국가</span>
               <select name="targetCountry" id="targetCountry">
-                <option value="">선택</option>
+                <option value="" data-i18n="selectPlaceholder">선택</option>
               </select>
             </label>
           </div>
 
           <label class="full checkbox">
             <input name="consent" type="checkbox" required />
-            즉석 촬영 및 데이터 처리에 동의합니다.
+            <span data-i18n="consentText">즉석 촬영 및 데이터 처리에 동의합니다.</span>
           </label>
 
           <div class="actions">
-            <button type="submit" id="submitBtn" disabled>셀피 제출하기</button>
-            <button class="secondary" type="button" id="resetBtn">입력 초기화</button>
+            <button type="submit" id="submitBtn" disabled data-i18n="submitBtn">셀피 제출하기</button>
+            <button class="secondary" type="button" id="resetBtn" data-i18n="resetBtn">입력 초기화</button>
           </div>
         </form>
       </section>
 
       <section class="panel result-panel">
         <div class="panel-header">
-          <h2>어울림 결과</h2>
+          <h2 data-i18n="resultTitle">어울림 결과</h2>
           <span class="pill">Top 1</span>
         </div>
         <div class="result" id="resultCard">
-          <h3>아직 제출된 셀피가 없어요</h3>
-          <p>즉석 촬영 인증을 완료하고 셀피를 제출해 주세요.</p>
+          <h3 data-i18n="resultEmptyTitle">아직 제출된 셀피가 없어요</h3>
+          <p data-i18n="resultEmptyBody">즉석 촬영 인증을 완료하고 셀피를 제출해 주세요.</p>
           <div class="result-photo" id="resultPhoto">
-            <span>결과 사진</span>
+            <span data-i18n="resultPhoto">결과 사진</span>
           </div>
           <div class="result-meta" id="resultMeta">
-            <div>대상 성별: -</div>
-            <div>대상 지역: -</div>
-            <div>유사도 점수: -</div>
+            <div data-i18n="resultMetaGender">대상 성별: -</div>
+            <div data-i18n="resultMetaLocation">대상 지역: -</div>
+            <div data-i18n="resultMetaScore">유사도 점수: -</div>
           </div>
         </div>
         <div class="note">
-          <strong>알림:</strong> 국가/대륙은 제출자가 선택한 정보이며, 사진만으로 국가를 판별할 수 없습니다.
+          <strong data-i18n="noteTitle">알림:</strong>
+          <span data-i18n="noteBody">국가/대륙은 제출자가 선택한 정보이며, 사진만으로 국가를 판별할 수 없습니다.</span>
         </div>
         <div class="history-panel">
-          <h3>저장된 셀피</h3>
-          <p class="muted">최대 50장까지 저장됩니다.</p>
+          <h3 data-i18n="historyTitle">저장된 셀피</h3>
+          <p class="muted" data-i18n="historyHint">최대 50장까지 저장됩니다.</p>
           <div class="history" id="historyList"></div>
         </div>
       </section>
     </main>
 
     <footer class="footer">
-      <p>프로토타입: 즉석 촬영 확인은 보조 지표이며 완벽한 보장은 아닙니다.</p>
+      <p data-i18n="footerNote">프로토타입: 즉석 촬영 확인은 보조 지표이며 완벽한 보장은 아닙니다.</p>
     </footer>
   </div>
 
