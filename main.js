@@ -1,6 +1,10 @@
-const MAX_ENTRIES = 50;
+const MAX_ENTRIES = 100;
 const STORAGE_KEY = "selfie-vibe-entries";
 const LANGUAGE_KEY = "selfie-vibe-language";
+
+const SUPABASE_URL = "https://aoqnyonbzyxgofwenejj.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_J-z4jzkNQePfIY4uUgiZdA_eWrDGtta";
+const SUPABASE_BUCKET = "selfies";
 
 const startCamBtn = document.getElementById("startCamBtn");
 const stopCamBtn = document.getElementById("stopCamBtn");
@@ -33,6 +37,10 @@ const resultPhoto = document.getElementById("resultPhoto");
 const resultMeta = document.getElementById("resultMeta");
 const historyList = document.getElementById("historyList");
 
+const supabase = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
 let stream = null;
 let videoEl = null;
 let livenessPassed = false;
@@ -40,6 +48,8 @@ let captureDataUrl = "";
 let captureFeature = null;
 let challengeIssuedAt = 0;
 let currentLang = "ko";
+let entriesCache = [];
+let lastMatch = null;
 
 const I18N = {
   ko: {
@@ -88,7 +98,7 @@ const I18N = {
     noteTitle: "알림:",
     noteBody: "국가/대륙은 제출자가 선택한 정보이며, 사진만으로 국가를 판별할 수 없습니다.",
     historyTitle: "저장된 셀피",
-    historyHint: "최대 50장까지 저장됩니다.",
+    historyHint: "최대 100장까지 저장됩니다.",
     footerNote: "프로토타입: 즉석 촬영 확인은 보조 지표이며 완벽한 보장은 아닙니다.",
     statusReady: "웹캠 준비 완료. 랜덤 동작을 수행하고 인증을 눌러주세요.",
     statusDenied: "웹캠 접근이 거부되었습니다.",
@@ -101,6 +111,9 @@ const I18N = {
     statusNeedLiveness: "즉석 촬영 인증을 먼저 완료해주세요.",
     statusNeedSelfie: "셀피를 먼저 찍어주세요.",
     statusSubmitted: "제출 완료! 새로운 셀피를 제출할 수 있습니다.",
+    statusUploading: "셀피 업로드 중...",
+    statusSaving: "데이터 저장 중...",
+    statusLoadFailed: "데이터를 불러오지 못했습니다.",
     resultNoMatchTitle: "조건에 맞는 셀피가 없습니다",
     resultNoMatchBody: "다른 필터로 다시 시도하거나 더 많은 셀피가 필요합니다.",
     resultMatchTitle: "가장 잘 어울리는 셀피",
@@ -161,7 +174,7 @@ const I18N = {
     noteTitle: "Note:",
     noteBody: "Country/continent are user-selected. A photo alone can't verify a country.",
     historyTitle: "Saved selfies",
-    historyHint: "Up to 50 photos are stored.",
+    historyHint: "Up to 100 photos are stored.",
     footerNote: "Prototype: live check is a supporting signal, not a guarantee.",
     statusReady: "Camera ready. Do the action and tap live check.",
     statusDenied: "Camera permission was denied.",
@@ -174,6 +187,9 @@ const I18N = {
     statusNeedLiveness: "Complete live check first.",
     statusNeedSelfie: "Capture a selfie first.",
     statusSubmitted: "Submitted! You can add another selfie.",
+    statusUploading: "Uploading selfie...",
+    statusSaving: "Saving data...",
+    statusLoadFailed: "Failed to load data.",
     resultNoMatchTitle: "No matching selfie",
     resultNoMatchBody: "Try different filters or add more selfies.",
     resultMatchTitle: "Best vibe match",
@@ -234,7 +250,7 @@ const I18N = {
     noteTitle: "注意:",
     noteBody: "国/大陸は自己申告です。写真だけで国を判定できません。",
     historyTitle: "保存済みセルフィー",
-    historyHint: "最大50枚まで保存されます。",
+    historyHint: "最大100枚まで保存されます。",
     footerNote: "プロトタイプ: 即時チェックは補助指標です。",
     statusReady: "カメラ準備完了。動作してチェックを押してください。",
     statusDenied: "カメラへのアクセスが拒否されました。",
@@ -247,6 +263,9 @@ const I18N = {
     statusNeedLiveness: "先に即時チェックを完了してください。",
     statusNeedSelfie: "先にセルフィーを撮影してください。",
     statusSubmitted: "送信完了！次のセルフィーを追加できます。",
+    statusUploading: "セルフィーをアップロード中...",
+    statusSaving: "データ保存中...",
+    statusLoadFailed: "データを取得できませんでした。",
     resultNoMatchTitle: "該当するセルフィーがありません",
     resultNoMatchBody: "条件を変えるか、セルフィーを追加してください。",
     resultMatchTitle: "最も雰囲気が近いセルフィー",
@@ -307,7 +326,7 @@ const I18N = {
     noteTitle: "Nota:",
     noteBody: "País/continente son datos elegidos. Una foto no puede verificar un país.",
     historyTitle: "Selfies guardadas",
-    historyHint: "Se guardan hasta 50 fotos.",
+    historyHint: "Se guardan hasta 100 fotos.",
     footerNote: "Prototipo: la verificación es solo un indicador auxiliar.",
     statusReady: "Cámara lista. Haz la acción y pulsa verificar.",
     statusDenied: "Se denegó el permiso de cámara.",
@@ -320,6 +339,9 @@ const I18N = {
     statusNeedLiveness: "Completa primero la verificación.",
     statusNeedSelfie: "Toma una selfie primero.",
     statusSubmitted: "¡Enviado! Puedes añadir otra selfie.",
+    statusUploading: "Subiendo selfie...",
+    statusSaving: "Guardando datos...",
+    statusLoadFailed: "No se pudieron cargar los datos.",
     resultNoMatchTitle: "No hay coincidencias",
     resultNoMatchBody: "Prueba otros filtros o añade más selfies.",
     resultMatchTitle: "Mejor vibra",
@@ -434,26 +456,9 @@ const applyTranslations = () => {
   populateSelect(selfCountry, REGION_DATA.countries);
   populateSelect(targetCountry, REGION_DATA.countries);
 
-  updateHistory(loadEntries());
+  updateHistory(entriesCache);
   updateResult(lastMatch);
   resetChallenge();
-};
-
-const loadEntries = () => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed)) return [];
-    return parsed;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-};
-
-const saveEntries = (entries) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
 };
 
 const setStatus = (text, isError = false) => {
@@ -649,14 +654,14 @@ const cosineSimilarity = (a, b) => {
 
 const passesFilter = (entry, selection) => {
   if (!entry) return false;
-  if (selection.targetGender !== "any" && entry.selfGender !== selection.targetGender) {
+  if (selection.targetGender !== "any" && entry.self_gender !== selection.targetGender) {
     return false;
   }
   if (selection.scope === "continent") {
-    return entry.selfContinent === selection.targetContinent;
+    return entry.self_continent === selection.targetContinent;
   }
   if (selection.scope === "country") {
-    return entry.selfCountry === selection.targetCountry;
+    return entry.self_country === selection.targetCountry;
   }
   return true;
 };
@@ -667,7 +672,7 @@ const findBestMatch = (entries, feature, selection, excludeId) => {
   entries.forEach((entry) => {
     if (entry.id === excludeId) return;
     if (!passesFilter(entry, selection)) return;
-    const score = cosineSimilarity(feature, entry.feature);
+    const score = cosineSimilarity(feature, entry.embedding);
     if (score > bestScore) {
       bestScore = score;
       best = { ...entry, score };
@@ -692,19 +697,17 @@ const updateHistory = (entries) => {
     const item = document.createElement("div");
     item.className = "history-item";
     item.innerHTML = `
-      <img src="${entry.photo}" alt="${t("selfieAlt")}" />
-      <div>${genderLabel(entry.selfGender)}</div>
-      <div>${toTitle(entry.selfContinent)} ${toTitle(entry.selfCountry)}</div>
+      <img src="${entry.image_path}" alt="${t("selfieAlt")}" />
+      <div>${genderLabel(entry.self_gender)}</div>
+      <div>${toTitle(entry.self_continent)} ${toTitle(entry.self_country)}</div>
     `;
     historyList.appendChild(item);
   });
 };
 
-let lastMatch = null;
-
 const updateResult = (match) => {
   if (!match) {
-    const hasEntries = loadEntries().length > 0;
+    const hasEntries = entriesCache.length > 0;
     resultCard.querySelector("h3").textContent = hasEntries ? t("resultNoMatchTitle") : t("resultEmptyTitle");
     resultCard.querySelector("p").textContent = hasEntries ? t("resultNoMatchBody") : t("resultEmptyBody");
     resultPhoto.innerHTML = `<span>${t("resultPhoto")}</span>`;
@@ -717,10 +720,10 @@ const updateResult = (match) => {
   }
   resultCard.querySelector("h3").textContent = t("resultMatchTitle");
   resultCard.querySelector("p").textContent = t("resultMatchBody");
-  resultPhoto.innerHTML = `<img src="${match.photo}" alt="${t("matchAlt")}" />`;
-  const locationLabel = `${toTitle(match.selfContinent)} ${toTitle(match.selfCountry)}`.trim();
+  resultPhoto.innerHTML = `<img src="${match.image_path}" alt="${t("matchAlt")}" />`;
+  const locationLabel = `${toTitle(match.self_continent)} ${toTitle(match.self_country)}`.trim();
   resultMeta.innerHTML = `
-    <div>${t("resultMetaGenderLabel")}: ${genderLabel(match.selfGender)}</div>
+    <div>${t("resultMetaGenderLabel")}: ${genderLabel(match.self_gender)}</div>
     <div>${t("resultMetaLocationLabel")}: ${locationLabel || "-"}</div>
     <div>${t("resultMetaScoreLabel")}: ${(match.score * 100).toFixed(1)}%</div>
   `;
@@ -746,7 +749,46 @@ const updateSubmitState = () => {
   submitBtn.disabled = !submitForm.checkValidity() || !captureDataUrl || !livenessPassed;
 };
 
-const handleSubmit = (event) => {
+const dataUrlToBlob = (dataUrl) => {
+  const [meta, content] = dataUrl.split(",");
+  const mime = meta.match(/:(.*?);/)[1];
+  const binary = atob(content);
+  const length = binary.length;
+  const array = new Uint8Array(length);
+  for (let i = 0; i < length; i += 1) {
+    array[i] = binary.charCodeAt(i);
+  }
+  return new Blob([array], { type: mime });
+};
+
+const uploadSelfie = async (dataUrl) => {
+  if (!supabase) throw new Error("Supabase not available");
+  const blob = dataUrlToBlob(dataUrl);
+  const filename = `${Date.now()}-${Math.random().toString(16).slice(2)}.jpg`;
+  const { error: uploadError } = await supabase.storage
+    .from(SUPABASE_BUCKET)
+    .upload(filename, blob, { contentType: "image/jpeg" });
+  if (uploadError) throw uploadError;
+  const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(filename);
+  return data.publicUrl;
+};
+
+const fetchEntries = async () => {
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("selfies")
+    .select("id, created_at, image_path, embedding, self_gender, self_continent, self_country")
+    .order("created_at", { ascending: false })
+    .limit(MAX_ENTRIES);
+  if (error) {
+    console.error(error);
+    setStatus(t("statusLoadFailed"), true);
+    return [];
+  }
+  return data || [];
+};
+
+const handleSubmit = async (event) => {
   event.preventDefault();
   if (!livenessPassed) {
     setStatus(t("statusNeedLiveness"), true);
@@ -756,39 +798,56 @@ const handleSubmit = (event) => {
     setStatus(t("statusNeedSelfie"), true);
     return;
   }
+  if (!supabase) {
+    setStatus(t("statusLoadFailed"), true);
+    return;
+  }
 
-  const entries = loadEntries();
-  const entry = {
-    id: `entry-${Date.now()}`,
-    photo: captureDataUrl,
-    feature: captureFeature,
-    selfGender: selfGender.value,
-    selfContinent: selfContinent.value || "",
-    selfCountry: selfCountry.value || "",
-    createdAt: Date.now()
-  };
+  try {
+    setStatus(t("statusUploading"));
+    const imageUrl = await uploadSelfie(captureDataUrl);
 
-  const updated = [entry, ...entries].slice(0, MAX_ENTRIES);
-  saveEntries(updated);
-  updateHistory(updated);
+    setStatus(t("statusSaving"));
+    const { data: inserted, error } = await supabase
+      .from("selfies")
+      .insert({
+        image_path: imageUrl,
+        embedding: captureFeature,
+        self_gender: selfGender.value,
+        self_continent: selfContinent.value || null,
+        self_country: selfCountry.value || null
+      })
+      .select()
+      .single();
 
-  const selection = {
-    targetGender: targetGender.value,
-    scope: scopeSelect.value,
-    targetContinent: targetContinent.value,
-    targetCountry: targetCountry.value
-  };
+    if (error) {
+      throw error;
+    }
 
-  lastMatch = findBestMatch(updated, captureFeature, selection, entry.id);
-  updateResult(lastMatch);
+    entriesCache = await fetchEntries();
+    updateHistory(entriesCache);
 
-  livenessPassed = false;
-  captureDataUrl = "";
-  captureFeature = null;
-  submitForm.reset();
-  applyScopeRules();
-  resetChallenge();
-  setStatus(t("statusSubmitted"));
+    const selection = {
+      targetGender: targetGender.value,
+      scope: scopeSelect.value,
+      targetContinent: targetContinent.value,
+      targetCountry: targetCountry.value
+    };
+
+    lastMatch = findBestMatch(entriesCache, captureFeature, selection, inserted?.id);
+    updateResult(lastMatch);
+
+    livenessPassed = false;
+    captureDataUrl = "";
+    captureFeature = null;
+    submitForm.reset();
+    applyScopeRules();
+    resetChallenge();
+    setStatus(t("statusSubmitted"));
+  } catch (error) {
+    console.error(error);
+    setStatus(t("statusLoadFailed"), true);
+  }
 };
 
 const handleReset = () => {
@@ -828,10 +887,14 @@ if (languageSelect) {
   });
 }
 
-applyScopeRules();
-initLanguage();
-updateHistory(loadEntries());
-renderCameraPlaceholder();
+const initData = async () => {
+  applyScopeRules();
+  initLanguage();
+  renderCameraPlaceholder();
+  entriesCache = await fetchEntries();
+  updateHistory(entriesCache);
+  updateResult(lastMatch);
+};
 
 startCamBtn.addEventListener("click", startCamera);
 stopCamBtn.addEventListener("click", stopCamera);
@@ -854,3 +917,5 @@ window.addEventListener("beforeunload", () => {
     stream.getTracks().forEach((track) => track.stop());
   }
 });
+
+initData();
