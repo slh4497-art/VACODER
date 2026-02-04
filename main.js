@@ -207,7 +207,7 @@ const calculateFrameDiff = (dataA, dataB, step = 4) => {
 
 const runLivenessCheck = async () => {
   if (!videoEl) return;
-  if (Date.now() - challengeIssuedAt > 8000) {
+  if (Date.now() - challengeIssuedAt > 15000) {
     setStatus("시간이 초과되었습니다. 새로운 동작으로 다시 시도해주세요.", true);
     resetChallenge();
     return;
@@ -221,10 +221,10 @@ const runLivenessCheck = async () => {
   videoCanvas.height = sampleHeight;
 
   const frames = [];
-  for (let i = 0; i < 6; i += 1) {
+  for (let i = 0; i < 8; i += 1) {
     videoCtx.drawImage(videoEl, 0, 0, sampleWidth, sampleHeight);
     frames.push(videoCtx.getImageData(0, 0, sampleWidth, sampleHeight).data);
-    await new Promise((resolve) => setTimeout(resolve, 180));
+    await new Promise((resolve) => setTimeout(resolve, 200));
   }
 
   let diffTotal = 0;
@@ -233,7 +233,7 @@ const runLivenessCheck = async () => {
   }
   const avgDiff = diffTotal / (frames.length - 1);
 
-  if (avgDiff > 0.06) {
+  if (avgDiff > 0.03) {
     livenessPassed = true;
     captureBtn.disabled = false;
     setStatus("즉석 촬영 인증 완료! 이제 셀피를 찍어주세요.");
