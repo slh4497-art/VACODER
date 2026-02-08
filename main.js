@@ -18,6 +18,7 @@ const startCamBtn = document.getElementById("startCamBtn");
 const stopCamBtn = document.getElementById("stopCamBtn");
 const livenessBtn = document.getElementById("livenessBtn");
 const captureBtn = document.getElementById("captureBtn");
+const retakeBtn = document.getElementById("retakeBtn");
 const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
 const submitForm = document.getElementById("submitForm");
@@ -89,6 +90,7 @@ const I18N = {
     stopCam: "웹캠 끄기",
     livenessBtn: "즉석 촬영 인증",
     captureBtn: "셀피 찍기",
+    retakeBtn: "다시 찍기",
     livenessStatus: "웹캠을 켜면 랜덤 동작이 표시됩니다.",
     selfGender: "내 성별",
     targetGender: "원하는 상대 성별",
@@ -224,6 +226,7 @@ const I18N = {
     stopCam: "Stop camera",
     livenessBtn: "Live check",
     captureBtn: "Capture selfie",
+    retakeBtn: "Retake",
     livenessStatus: "Start the camera to see a random action.",
     selfGender: "My gender",
     targetGender: "Target gender",
@@ -359,6 +362,7 @@ const I18N = {
     stopCam: "カメラ停止",
     livenessBtn: "即時チェック",
     captureBtn: "セルフィー撮影",
+    retakeBtn: "撮り直し",
     livenessStatus: "カメラを起動するとランダム動作が表示されます。",
     selfGender: "自分の性別",
     targetGender: "相手の性別",
@@ -494,6 +498,7 @@ const I18N = {
     stopCam: "Detener cámara",
     livenessBtn: "Verificación",
     captureBtn: "Tomar selfie",
+    retakeBtn: "Repetir",
     livenessStatus: "Inicia la cámara para ver una acción aleatoria.",
     selfGender: "Mi género",
     targetGender: "Género objetivo",
@@ -862,6 +867,7 @@ const resetChallenge = () => {
   challengeIssuedAt = Date.now();
   livenessPassed = false;
   captureBtn.disabled = true;
+  if (retakeBtn) retakeBtn.disabled = true;
   submitBtn.disabled = true;
   livenessHint.textContent = t("livenessHint");
 };
@@ -884,6 +890,12 @@ const renderCameraPlaceholder = () => {
       <p>${t("cameraPlaceholder")}</p>
       <small>${t("cameraHelp")}</small>
     </div>
+  `;
+};
+
+const renderCapturePreview = (dataUrl) => {
+  cameraWrap.innerHTML = `
+    <img class="capture-preview" src="${dataUrl}" alt="${t("selfieAlt")}" />
   `;
 };
 
@@ -916,6 +928,9 @@ const stopCamera = () => {
   stopCamBtn.disabled = true;
   livenessBtn.disabled = true;
   captureBtn.disabled = true;
+  if (retakeBtn) retakeBtn.disabled = true;
+  captureDataUrl = "";
+  captureFeature = null;
   submitBtn.disabled = true;
   setStatus(t("statusStopped"));
 };
@@ -990,7 +1005,24 @@ const captureSelfie = () => {
   captureDataUrl = canvas.toDataURL(IMAGE_FORMAT, IMAGE_QUALITY);
   captureFeature = extractFeature(canvas);
   livenessHint.textContent = t("statusCaptured");
-  submitBtn.disabled = !submitForm.checkValidity();
+  renderCapturePreview(captureDataUrl);
+  captureBtn.disabled = true;
+  if (retakeBtn) retakeBtn.disabled = false;
+  updateSubmitState();
+};
+
+const retakeSelfie = () => {
+  captureDataUrl = "";
+  captureFeature = null;
+  if (stream) {
+    attachVideo(stream);
+  } else {
+    renderCameraPlaceholder();
+  }
+  livenessHint.textContent = t("livenessHint");
+  captureBtn.disabled = !livenessPassed;
+  if (retakeBtn) retakeBtn.disabled = true;
+  updateSubmitState();
 };
 
 const extractFeature = (sourceCanvas) => {
@@ -1246,6 +1278,7 @@ const handleReset = () => {
   livenessPassed = false;
   applyScopeRules();
   resetChallenge();
+  if (retakeBtn) retakeBtn.disabled = true;
   updateSubmitState();
 };
 
@@ -1290,6 +1323,9 @@ startCamBtn.addEventListener("click", startCamera);
 stopCamBtn.addEventListener("click", stopCamera);
 livenessBtn.addEventListener("click", runLivenessCheck);
 captureBtn.addEventListener("click", captureSelfie);
+if (retakeBtn) {
+  retakeBtn.addEventListener("click", retakeSelfie);
+}
 scopeSelect.addEventListener("change", () => {
   applyScopeRules();
   updateSubmitState();
