@@ -1,6 +1,8 @@
 const MAX_ENTRIES = 100;
 const STORAGE_KEY = "selfie-vibe-entries";
 const LANGUAGE_KEY = "selfie-vibe-language";
+const ADMIN_KEY = "selfie-vibe-admin";
+const ADMIN_PASSCODE = "0128";
 
 const SUPABASE_URL = "https://aoqnyonbzyxgofwenejj.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_J-z4jzkNQePfIY4uUgiZdA_eWrDGtta";
@@ -20,6 +22,11 @@ const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
 const submitForm = document.getElementById("submitForm");
 const languageSelect = document.getElementById("languageSelect");
+const historyGate = document.getElementById("historyGate");
+const adminPasscode = document.getElementById("adminPasscode");
+const adminUnlockBtn = document.getElementById("adminUnlockBtn");
+const adminLogoutBtn = document.getElementById("adminLogoutBtn");
+const adminStatus = document.getElementById("adminStatus");
 const shareNativeBtn = document.getElementById("shareNativeBtn");
 const shareCopyBtn = document.getElementById("shareCopyBtn");
 const shareStatus = document.getElementById("shareStatus");
@@ -61,6 +68,7 @@ let currentLang = "ko";
 let entriesCache = [];
 let lastMatch = null;
 let shareStatusTimer = null;
+let adminStatusTimer = null;
 
 const I18N = {
   ko: {
@@ -111,6 +119,13 @@ const I18N = {
     noteBody: "국가/대륙은 제출자가 선택한 정보이며, 사진만으로 국가를 판별할 수 없습니다.",
     historyTitle: "저장된 셀피",
     historyHint: "최대 100장까지 저장됩니다.",
+    historyLocked: "개발자 전용 영역입니다.",
+    adminPasscodePlaceholder: "관리자 키 입력",
+    adminUnlock: "관리자 열기",
+    adminLogout: "관리자 해제",
+    adminHint: "키는 이 브라우저에만 저장됩니다.",
+    adminInvalid: "키가 올바르지 않습니다.",
+    adminUnlocked: "관리자 모드가 활성화되었습니다.",
     aboutTitle: "서비스 소개",
     aboutPill: "What it does",
     aboutSubtitle: "즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 서비스입니다.",
@@ -239,6 +254,13 @@ const I18N = {
     noteBody: "Country/continent are user-selected. A photo alone can't verify a country.",
     historyTitle: "Saved selfies",
     historyHint: "Up to 100 photos are stored.",
+    historyLocked: "Developer-only area.",
+    adminPasscodePlaceholder: "Enter admin key",
+    adminUnlock: "Unlock admin",
+    adminLogout: "Exit admin",
+    adminHint: "The key is stored only in this browser.",
+    adminInvalid: "Invalid key.",
+    adminUnlocked: "Admin mode enabled.",
     aboutTitle: "About",
     aboutPill: "What it does",
     aboutSubtitle: "Upload a live selfie and see the single most vibe-matching photo.",
@@ -367,6 +389,13 @@ const I18N = {
     noteBody: "国/大陸は自己申告です。写真だけで国を判定できません。",
     historyTitle: "保存済みセルフィー",
     historyHint: "最大100枚まで保存されます。",
+    historyLocked: "開発者専用エリアです。",
+    adminPasscodePlaceholder: "管理者キーを入力",
+    adminUnlock: "管理者を開く",
+    adminLogout: "管理者を終了",
+    adminHint: "キーはこのブラウザにのみ保存されます。",
+    adminInvalid: "キーが正しくありません。",
+    adminUnlocked: "管理者モードを有効にしました。",
     aboutTitle: "サービス紹介",
     aboutPill: "What it does",
     aboutSubtitle: "今撮ったセルフィーから、最も雰囲気が合う写真1枚を表示します。",
@@ -495,6 +524,13 @@ const I18N = {
     noteBody: "País/continente son datos elegidos. Una foto no puede verificar un país.",
     historyTitle: "Selfies guardadas",
     historyHint: "Se guardan hasta 100 fotos.",
+    historyLocked: "Área solo para desarrolladores.",
+    adminPasscodePlaceholder: "Ingresa la clave admin",
+    adminUnlock: "Desbloquear admin",
+    adminLogout: "Salir de admin",
+    adminHint: "La clave se guarda solo en este navegador.",
+    adminInvalid: "Clave inválida.",
+    adminUnlocked: "Modo admin activado.",
     aboutTitle: "Acerca de",
     aboutPill: "What it does",
     aboutSubtitle: "Sube una selfie en vivo y verás la foto con vibra más parecida.",
@@ -670,6 +706,11 @@ const applyTranslations = () => {
     el.textContent = t(key);
   });
 
+  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+    const key = el.dataset.i18nPlaceholder;
+    el.setAttribute("placeholder", t(key));
+  });
+
   populateSelect(selfContinent, REGION_DATA.continents);
   populateSelect(targetContinent, REGION_DATA.continents);
   populateSelect(selfCountry, REGION_DATA.countries);
@@ -679,6 +720,7 @@ const applyTranslations = () => {
   updateResult(lastMatch);
   resetChallenge();
   updateShareState();
+  updateAdminView();
 };
 
 const getSharePayload = () => ({
@@ -771,6 +813,40 @@ const handleShareClick = async (platform) => {
 const updateShareState = () => {
   if (shareNativeBtn) {
     shareNativeBtn.classList.toggle("hidden", !navigator.share);
+  }
+};
+
+const isAdminEnabled = () => localStorage.getItem(ADMIN_KEY) === "true";
+
+const setAdminEnabled = (enabled) => {
+  localStorage.setItem(ADMIN_KEY, enabled ? "true" : "false");
+};
+
+const setAdminStatus = (text, isError = false) => {
+  if (!adminStatus) return;
+  adminStatus.textContent = text;
+  adminStatus.style.color = isError ? "#d6426a" : "";
+  if (adminStatusTimer) {
+    clearTimeout(adminStatusTimer);
+  }
+  if (text) {
+    adminStatusTimer = setTimeout(() => {
+      adminStatus.textContent = "";
+      adminStatus.style.color = "";
+    }, 3200);
+  }
+};
+
+const updateAdminView = () => {
+  const enabled = isAdminEnabled();
+  if (historyGate) {
+    historyGate.classList.toggle("hidden", enabled);
+  }
+  if (historyList) {
+    historyList.classList.toggle("hidden", !enabled);
+  }
+  if (adminLogoutBtn) {
+    adminLogoutBtn.classList.toggle("hidden", !enabled);
   }
 };
 
@@ -1207,6 +1283,7 @@ const initData = async () => {
   entriesCache = await fetchEntries();
   updateHistory(entriesCache);
   updateResult(lastMatch);
+  updateAdminView();
 };
 
 startCamBtn.addEventListener("click", startCamera);
@@ -1224,6 +1301,35 @@ scopeSelect.addEventListener("change", () => {
 
 submitForm.addEventListener("submit", handleSubmit);
 resetBtn.addEventListener("click", handleReset);
+
+if (adminUnlockBtn && adminPasscode) {
+  const handleAdminUnlock = () => {
+    const value = adminPasscode.value.trim();
+    if (!value) return;
+    if (value === ADMIN_PASSCODE) {
+      setAdminEnabled(true);
+      adminPasscode.value = "";
+      updateAdminView();
+      setAdminStatus(t("adminUnlocked"));
+    } else {
+      setAdminStatus(t("adminInvalid"), true);
+    }
+  };
+  adminUnlockBtn.addEventListener("click", handleAdminUnlock);
+  adminPasscode.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleAdminUnlock();
+    }
+  });
+}
+
+if (adminLogoutBtn) {
+  adminLogoutBtn.addEventListener("click", () => {
+    setAdminEnabled(false);
+    updateAdminView();
+  });
+}
 
 if (shareNativeBtn) {
   shareNativeBtn.addEventListener("click", () => {
