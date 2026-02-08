@@ -230,8 +230,22 @@
           <span data-i18n="noteBody">국가/대륙은 제출자가 선택한 정보이며, 사진만으로 국가를 판별할 수 없습니다.</span>
         </div>
         <div class="history-panel">
-          <h3 data-i18n="historyTitle">저장된 셀피</h3>
-          <p class="muted" data-i18n="historyHint">최대 100장까지 저장됩니다.</p>
+          <div class="history-header">
+            <div>
+              <h3 data-i18n="historyTitle">저장된 셀피</h3>
+              <p class="muted" data-i18n="historyHint">최대 100장까지 저장됩니다.</p>
+            </div>
+            <button type="button" class="ghost admin-logout hidden" id="adminLogoutBtn" data-i18n="adminLogout">관리자 해제</button>
+          </div>
+          <div class="admin-gate" id="historyGate">
+            <p class="muted" data-i18n="historyLocked">개발자 전용 영역입니다.</p>
+            <div class="admin-actions">
+              <input type="password" id="adminPasscode" autocomplete="current-password" data-i18n-placeholder="adminPasscodePlaceholder" placeholder="관리자 키 입력" />
+              <button type="button" id="adminUnlockBtn" data-i18n="adminUnlock">관리자 열기</button>
+            </div>
+            <span class="admin-status" id="adminStatus" role="status" aria-live="polite"></span>
+            <small class="muted" data-i18n="adminHint">키는 이 브라우저에만 저장됩니다.</small>
+          </div>
           <div class="history" id="historyList"></div>
         </div>
       </section>
