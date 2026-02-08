@@ -640,6 +640,9 @@ body[data-theme="dark"] .result {
 
 .admin-logout {
   align-self: center;
+  font-size: 0.8rem;
+  padding: 6px 10px;
+  opacity: 0.7;
 }
 
 .admin-gate {
@@ -655,6 +658,7 @@ body[data-theme="dark"] .result {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+  align-items: center;
 }
 
 .admin-actions input {
@@ -664,6 +668,22 @@ body[data-theme="dark"] .result {
   border-radius: 12px;
   border: 1px solid var(--panel-border);
   font-size: 0.95rem;
+}
+
+.admin-unlock {
+  background: transparent;
+  color: var(--muted);
+  box-shadow: none;
+  border: 1px dashed var(--panel-border);
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  opacity: 0.6;
+  margin-left: auto;
+}
+
+.admin-unlock:hover {
+  transform: none;
+  opacity: 0.85;
 }
 
 .admin-status {
