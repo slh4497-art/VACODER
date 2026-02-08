@@ -20,6 +20,10 @@ const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
 const submitForm = document.getElementById("submitForm");
 const languageSelect = document.getElementById("languageSelect");
+const shareNativeBtn = document.getElementById("shareNativeBtn");
+const shareCopyBtn = document.getElementById("shareCopyBtn");
+const shareStatus = document.getElementById("shareStatus");
+const shareButtons = Array.from(document.querySelectorAll(".share-btn"));
 
 const cameraWrap = document.getElementById("cameraWrap");
 const livenessStatus = document.getElementById("livenessStatus");
@@ -56,6 +60,7 @@ let challengeIssuedAt = 0;
 let currentLang = "ko";
 let entriesCache = [];
 let lastMatch = null;
+let shareStatusTimer = null;
 
 const I18N = {
   ko: {
@@ -140,6 +145,23 @@ const I18N = {
     policyLinkPrivacy: "개인정보처리방침",
     policyLinkTerms: "이용약관",
     policyLinkContact: "문의하기",
+    shareTitle: "SNS로 공유하기",
+    sharePill: "Share",
+    shareSubtitle: "친구에게 공유해 더 많은 셀피를 모아주세요.",
+    shareNative: "빠른 공유",
+    shareCopy: "링크 복사",
+    shareCopied: "링크가 복사되었어요!",
+    shareCopyFailed: "링크 복사에 실패했어요.",
+    shareError: "공유에 실패했습니다.",
+    shareNote: "모바일에서는 설치된 앱으로 바로 공유됩니다.",
+    shareMessage: "지금 찍은 셀피로 분위기 매칭 해봐요 — 바이브픽",
+    shareInstagram: "Instagram",
+    shareTikTok: "TikTok",
+    shareFacebook: "Facebook",
+    shareWhatsApp: "WhatsApp",
+    shareX: "X",
+    shareLine: "LINE",
+    shareTelegram: "Telegram",
     footerNote: "프로토타입: 즉석 촬영 확인은 보조 지표이며 완벽한 보장은 아닙니다.",
     statusReady: "웹캠 준비 완료. 랜덤 동작을 수행하고 인증을 눌러주세요.",
     statusDenied: "웹캠 접근이 거부되었습니다.",
@@ -251,6 +273,23 @@ const I18N = {
     policyLinkPrivacy: "Privacy Policy",
     policyLinkTerms: "Terms of Service",
     policyLinkContact: "Contact",
+    shareTitle: "Share on social",
+    sharePill: "Share",
+    shareSubtitle: "Share with friends to bring in more selfies.",
+    shareNative: "Quick share",
+    shareCopy: "Copy link",
+    shareCopied: "Link copied!",
+    shareCopyFailed: "Failed to copy link.",
+    shareError: "Sharing failed.",
+    shareNote: "On mobile, the share sheet opens your installed apps.",
+    shareMessage: "Try a selfie vibe match now — VibePick",
+    shareInstagram: "Instagram",
+    shareTikTok: "TikTok",
+    shareFacebook: "Facebook",
+    shareWhatsApp: "WhatsApp",
+    shareX: "X",
+    shareLine: "LINE",
+    shareTelegram: "Telegram",
     footerNote: "Prototype: live check is a supporting signal, not a guarantee.",
     statusReady: "Camera ready. Do the action and tap live check.",
     statusDenied: "Camera permission was denied.",
@@ -362,6 +401,23 @@ const I18N = {
     policyLinkPrivacy: "プライバシーポリシー",
     policyLinkTerms: "利用規約",
     policyLinkContact: "お問い合わせ",
+    shareTitle: "SNSで共有",
+    sharePill: "Share",
+    shareSubtitle: "友だちに共有して、セルフィーをもっと集めましょう。",
+    shareNative: "かんたん共有",
+    shareCopy: "リンクをコピー",
+    shareCopied: "リンクをコピーしました！",
+    shareCopyFailed: "リンクのコピーに失敗しました。",
+    shareError: "共有に失敗しました。",
+    shareNote: "モバイルでは共有シートからインストール済みアプリに送信できます。",
+    shareMessage: "今撮ったセルフィーで雰囲気マッチを試そう — VibePick",
+    shareInstagram: "Instagram",
+    shareTikTok: "TikTok",
+    shareFacebook: "Facebook",
+    shareWhatsApp: "WhatsApp",
+    shareX: "X",
+    shareLine: "LINE",
+    shareTelegram: "Telegram",
     footerNote: "プロトタイプ: 即時チェックは補助指標です。",
     statusReady: "カメラ準備完了。動作してチェックを押してください。",
     statusDenied: "カメラへのアクセスが拒否されました。",
@@ -473,6 +529,23 @@ const I18N = {
     policyLinkPrivacy: "Política de privacidad",
     policyLinkTerms: "Términos del servicio",
     policyLinkContact: "Contacto",
+    shareTitle: "Compartir en redes",
+    sharePill: "Compartir",
+    shareSubtitle: "Compártelo con amigos para atraer más selfies.",
+    shareNative: "Compartir rápido",
+    shareCopy: "Copiar enlace",
+    shareCopied: "¡Enlace copiado!",
+    shareCopyFailed: "No se pudo copiar el enlace.",
+    shareError: "Error al compartir.",
+    shareNote: "En móvil, la hoja de compartir abre las apps instaladas.",
+    shareMessage: "Prueba el match de vibes con tu selfie — VibePick",
+    shareInstagram: "Instagram",
+    shareTikTok: "TikTok",
+    shareFacebook: "Facebook",
+    shareWhatsApp: "WhatsApp",
+    shareX: "X",
+    shareLine: "LINE",
+    shareTelegram: "Telegram",
     footerNote: "Prototipo: la verificación es solo un indicador auxiliar.",
     statusReady: "Cámara lista. Haz la acción y pulsa verificar.",
     statusDenied: "Se denegó el permiso de cámara.",
@@ -605,6 +678,100 @@ const applyTranslations = () => {
   updateHistory(entriesCache);
   updateResult(lastMatch);
   resetChallenge();
+  updateShareState();
+};
+
+const getSharePayload = () => ({
+  title: document.title,
+  text: t("shareMessage"),
+  url: window.location.href
+});
+
+const buildShareUrl = (platform) => {
+  const { url, text } = getSharePayload();
+  const encodedUrl = encodeURIComponent(url);
+  const encodedText = encodeURIComponent(text);
+  if (platform === "x") {
+    return `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}`;
+  }
+  if (platform === "line") {
+    return `https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${encodedText}`;
+  }
+  if (platform === "telegram") {
+    return `https://t.me/share/url?url=${encodedUrl}&text=${encodedText}`;
+  }
+  return "";
+};
+
+const setShareStatus = (text, isError = false) => {
+  if (!shareStatus) return;
+  shareStatus.textContent = text;
+  shareStatus.style.color = isError ? "#d6426a" : "";
+  if (shareStatusTimer) {
+    clearTimeout(shareStatusTimer);
+  }
+  if (text) {
+    shareStatusTimer = setTimeout(() => {
+      shareStatus.textContent = "";
+      shareStatus.style.color = "";
+    }, 3200);
+  }
+};
+
+const copyShareLink = async () => {
+  const { url } = getSharePayload();
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(url);
+    } else {
+      const temp = document.createElement("textarea");
+      temp.value = url;
+      temp.setAttribute("readonly", "");
+      temp.style.position = "absolute";
+      temp.style.left = "-9999px";
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+    }
+    setShareStatus(t("shareCopied"));
+    return true;
+  } catch (error) {
+    console.error(error);
+    setShareStatus(t("shareCopyFailed"), true);
+    return false;
+  }
+};
+
+const runNativeShare = async () => {
+  if (!navigator.share) return false;
+  try {
+    await navigator.share(getSharePayload());
+    return true;
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      console.error(error);
+      setShareStatus(t("shareError"), true);
+    }
+    return false;
+  }
+};
+
+const handleShareClick = async (platform) => {
+  const shareUrl = buildShareUrl(platform);
+  if (shareUrl) {
+    window.open(shareUrl, "_blank", "noopener,noreferrer");
+    return;
+  }
+  const usedNative = await runNativeShare();
+  if (usedNative) return;
+  await copyShareLink();
+};
+
+const updateShareState = () => {
+  if (shareNativeBtn) {
+    shareNativeBtn.classList.toggle("hidden", !navigator.share);
+  }
 };
 
 const setStatus = (text, isError = false) => {
@@ -1057,6 +1224,24 @@ scopeSelect.addEventListener("change", () => {
 
 submitForm.addEventListener("submit", handleSubmit);
 resetBtn.addEventListener("click", handleReset);
+
+if (shareNativeBtn) {
+  shareNativeBtn.addEventListener("click", () => {
+    runNativeShare();
+  });
+}
+
+if (shareCopyBtn) {
+  shareCopyBtn.addEventListener("click", () => {
+    copyShareLink();
+  });
+}
+
+shareButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    handleShareClick(button.dataset.share);
+  });
+});
 
 window.addEventListener("beforeunload", () => {
   if (stream) {

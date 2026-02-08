@@ -300,6 +300,98 @@ button.ghost {
   border: 1px solid rgba(35, 31, 32, 0.1);
 }
 
+.share-panel {
+  margin-top: 24px;
+}
+
+.share-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.share-status {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.share-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.share-btn {
+  width: 100%;
+  background: var(--panel);
+  color: var(--ink);
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(47, 35, 50, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  text-align: left;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 35, 50, 0.2);
+  box-shadow: 0 12px 28px rgba(47, 35, 50, 0.12);
+}
+
+.share-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.share-instagram .share-icon {
+  background: linear-gradient(135deg, #f58529, #dd2a7b, #8134af, #515bd4);
+}
+
+.share-tiktok .share-icon {
+  background: linear-gradient(135deg, #111111, #25f4ee);
+}
+
+.share-facebook .share-icon {
+  background: #1877f2;
+}
+
+.share-whatsapp .share-icon {
+  background: #25d366;
+}
+
+.share-x .share-icon {
+  background: #0f1419;
+}
+
+.share-line .share-icon {
+  background: #06c755;
+}
+
+.share-telegram .share-icon {
+  background: #2aabee;
+}
+
+.share-note {
+  margin-top: 12px;
+  font-size: 0.9rem;
+}
+
 .result-panel {
   background: var(--panel-strong);
 }
