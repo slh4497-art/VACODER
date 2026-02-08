@@ -5,6 +5,12 @@ const LANGUAGE_KEY = "selfie-vibe-language";
 const SUPABASE_URL = "https://aoqnyonbzyxgofwenejj.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_J-z4jzkNQePfIY4uUgiZdA_eWrDGtta";
 const SUPABASE_BUCKET = "selfies";
+const IMAGE_FORMAT = (() => {
+  const test = document.createElement("canvas").toDataURL("image/webp");
+  return test.startsWith("data:image/webp") ? "image/webp" : "image/jpeg";
+})();
+const IMAGE_EXT = IMAGE_FORMAT === "image/webp" ? "webp" : "jpg";
+const IMAGE_QUALITY = IMAGE_FORMAT === "image/webp" ? 0.82 : 0.86;
 
 const startCamBtn = document.getElementById("startCamBtn");
 const stopCamBtn = document.getElementById("stopCamBtn");
@@ -53,9 +59,9 @@ let lastMatch = null;
 
 const I18N = {
   ko: {
-    title: "바이브픽",
+    title: "바이브픽 | 셀피 분위기 매칭",
     eyebrow: "selfie vibe match",
-    heroTitle: "바이브픽",
+    heroTitle: "바이브픽 셀피 분위기 매칭",
     heroSubtitle: "지금 찍은 셀피로, 분위기 찰떡인 사진만 보여줘요.",
     languageLabel: "언어",
     captureTitle: "즉석 셀피 제출",
@@ -153,9 +159,9 @@ const I18N = {
     ]
   },
   en: {
-    title: "VibePick",
+    title: "VibePick | Selfie Vibe Match",
     eyebrow: "selfie vibe match",
-    heroTitle: "VibePick",
+    heroTitle: "VibePick Selfie Vibe Match",
     heroSubtitle: "Snap a selfie now and see the most vibe-matching photo.",
     languageLabel: "Language",
     captureTitle: "Instant Selfie",
@@ -253,9 +259,9 @@ const I18N = {
     ]
   },
   ja: {
-    title: "バイブピック",
+    title: "バイブピック | セルフィー雰囲気マッチ",
     eyebrow: "selfie vibe match",
-    heroTitle: "バイブピック",
+    heroTitle: "バイブピック セルフィー雰囲気マッチ",
     heroSubtitle: "今撮ったセルフィーで、いちばん雰囲気が合う写真を見せます。",
     languageLabel: "言語",
     captureTitle: "今撮りセルフィー",
@@ -353,9 +359,9 @@ const I18N = {
     ]
   },
   es: {
-    title: "VibePick",
+    title: "VibePick | Match de vibra de selfie",
     eyebrow: "selfie vibe match",
-    heroTitle: "VibePick",
+    heroTitle: "VibePick Match de vibra de selfie",
     heroSubtitle: "Tómate una selfie ahora y mira la foto con mejor vibra.",
     languageLabel: "Idioma",
     captureTitle: "Selfie instantánea",
@@ -694,7 +700,7 @@ const captureSelfie = () => {
   const sx = (vWidth - side) / 2;
   const sy = (vHeight - side) / 2;
   ctx.drawImage(videoEl, sx, sy, side, side, 0, 0, size, size);
-  captureDataUrl = canvas.toDataURL("image/jpeg", 0.86);
+  captureDataUrl = canvas.toDataURL(IMAGE_FORMAT, IMAGE_QUALITY);
   captureFeature = extractFeature(canvas);
   livenessHint.textContent = t("statusCaptured");
   submitBtn.disabled = !submitForm.checkValidity();
@@ -860,10 +866,10 @@ const dataUrlToBlob = (dataUrl) => {
 const uploadSelfie = async (dataUrl) => {
   if (!supabase) throw new Error("Supabase not available");
   const blob = dataUrlToBlob(dataUrl);
-  const filename = `${Date.now()}-${Math.random().toString(16).slice(2)}.jpg`;
+  const filename = `${Date.now()}-${Math.random().toString(16).slice(2)}.${IMAGE_EXT}`;
   const { error: uploadError } = await supabase.storage
     .from(SUPABASE_BUCKET)
-    .upload(filename, blob, { contentType: "image/jpeg" });
+    .upload(filename, blob, { contentType: IMAGE_FORMAT });
   if (uploadError) throw uploadError;
   const { data } = supabase.storage.from(SUPABASE_BUCKET).getPublicUrl(filename);
   return data.publicUrl;

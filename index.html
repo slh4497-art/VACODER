@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>바이브픽 | 셀피 분위기 매칭</title>
-  <meta name="description" content="즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 서비스." />
+  <meta name="description" content="즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 셀피 분위기 매칭 서비스." />
+  <meta name="keywords" content="바이브픽, 셀피, 분위기 매칭, 사진 매칭, 톤, 스타일, selfie, vibe match" />
   <meta name="robots" content="index,follow" />
   <meta name="google-site-verification" content="6HClOibJkXy6guEu3krFDQwKzidlOw4zeThknl5zMrM" />
   <meta name="naver-site-verification" content="4a6a931975f810ec6b7b5747f09118cf93d30583" />
@@ -14,17 +15,19 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="바이브픽" />
   <meta property="og:title" content="바이브픽 | 셀피 분위기 매칭" />
-  <meta property="og:description" content="즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 서비스." />
+  <meta property="og:description" content="즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 셀피 분위기 매칭 서비스." />
   <meta property="og:url" content="https://vibepick.one/" />
   <meta property="og:image" content="https://vibepick.one/og-image.svg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="바이브픽 | 셀피 분위기 매칭" />
-  <meta name="twitter:description" content="즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 서비스." />
+  <meta name="twitter:description" content="즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 셀피 분위기 매칭 서비스." />
   <meta name="twitter:image" content="https://vibepick.one/og-image.svg" />
   <meta name="google-adsense-account" content="ca-pub-5463140486730380">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5463140486730380"
      crossorigin="anonymous"></script>
-  <link rel="stylesheet" href="/style.css" />
+  <link rel="preload" href="/style.css" as="style" />
+  <link rel="stylesheet" href="/style.css" media="print" onload="this.media='all'" />
+  <noscript><link rel="stylesheet" href="/style.css" /></noscript>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EZGRTN1S5X"></script>
 <script>
@@ -40,7 +43,7 @@
     "@type": "WebSite",
     "name": "바이브픽",
     "url": "https://vibepick.one/",
-    "description": "즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 서비스.",
+    "description": "즉석 셀피로 분위기(톤/스타일) 유사도가 높은 사진 1장을 보여주는 셀피 분위기 매칭 서비스.",
     "inLanguage": "ko-KR",
     "publisher": {
       "@type": "Organization",
@@ -62,7 +65,7 @@
       <p class="eyebrow" data-i18n="eyebrow">selfie vibe match</p>
       <div class="hero-row">
         <div>
-          <h1 data-i18n="heroTitle">바이브픽</h1>
+          <h1 data-i18n="heroTitle">바이브픽 셀피 분위기 매칭</h1>
           <p class="subtitle" data-i18n="heroSubtitle">지금 찍은 셀피로, 분위기 찰떡인 사진만 보여줘요.</p>
         </div>
         <label class="lang-select">
@@ -286,7 +289,7 @@
     </footer>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-  <script src="/main.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+  <script defer src="/main.js"></script>
 </body>
 </html>
