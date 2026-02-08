@@ -63,6 +63,7 @@ const I18N = {
     eyebrow: "selfie vibe match",
     heroTitle: "바이브픽 셀피 분위기 매칭",
     heroSubtitle: "지금 찍은 셀피로, 분위기 찰떡인 사진만 보여줘요.",
+    heroDefinition: "바이브픽은 지금 찍은 셀피로 분위기가 비슷한 사진 1장을 바로 보여주는 웹 서비스입니다.",
     languageLabel: "언어",
     captureTitle: "즉석 셀피 제출",
     capturePill: "WebCam Only",
@@ -111,6 +112,16 @@ const I18N = {
     aboutPoint1: "지금 찍은 셀피만 업로드할 수 있어요(파일 업로드 없음).",
     aboutPoint2: "전 세계 사용자가 올린 셀피 풀에서 가장 비슷한 분위기를 찾습니다.",
     aboutPoint3: "매칭/연결 없이 결과 사진만 보여줍니다.",
+    qaTitle: "바이브픽은 어떤 서비스인가요?",
+    qaPill: "Quick Q&A",
+    qa1Title: "바이브픽은 무료인가요?",
+    qa1Body: "현재는 무료로 이용할 수 있습니다. 셀피 촬영 후 바로 매칭 결과를 확인할 수 있어요.",
+    qa2Title: "어떤 기준으로 사진을 보여주나요?",
+    qa2Body: "톤, 색감, 분위기 유사도를 기준으로 가장 비슷한 사진 1장을 찾습니다. 결과는 연결 없이 사진만 보여줍니다.",
+    qa3Title: "결과가 마음에 들지 않으면?",
+    qa3Body: "다른 필터를 선택하거나 새 셀피를 찍어 다시 시도할 수 있습니다. 더 많은 셀피가 쌓일수록 정확도가 좋아집니다.",
+    qa4Title: "내 셀피는 어디에 저장되나요?",
+    qa4Body: "매칭을 위해 저장되며 요청 시 삭제할 수 있습니다. 개인정보 처리방침에서 상세 내용을 확인하세요.",
     faqTitle: "자주 묻는 질문",
     faq1Title: "어떤 기준으로 어울림을 찾나요?",
     faq1Body: "이미지 톤/색감/분위기 유사도를 기준으로 가장 가까운 사진을 찾아 보여줍니다.",
@@ -163,6 +174,7 @@ const I18N = {
     eyebrow: "selfie vibe match",
     heroTitle: "VibePick Selfie Vibe Match",
     heroSubtitle: "Snap a selfie now and see the most vibe-matching photo.",
+    heroDefinition: "VibePick is a web service that instantly shows one photo with a similar vibe based on your live selfie.",
     languageLabel: "Language",
     captureTitle: "Instant Selfie",
     capturePill: "Webcam Only",
@@ -211,6 +223,16 @@ const I18N = {
     aboutPoint1: "Only live selfies are allowed (no file uploads).",
     aboutPoint2: "We search the global selfie pool for the closest vibe.",
     aboutPoint3: "No matching or messaging—just a result photo.",
+    qaTitle: "What is VibePick?",
+    qaPill: "Quick Q&A",
+    qa1Title: "Is VibePick free?",
+    qa1Body: "Yes, it is currently free to use. Take a live selfie and see the match right away.",
+    qa2Title: "How do you choose the photo?",
+    qa2Body: "We compare tone, color, and overall vibe to find the closest match. We only show the photo—no messaging or matching.",
+    qa3Title: "What if I don't like the result?",
+    qa3Body: "Try different filters or take a new selfie and try again. More selfies in the pool improve results over time.",
+    qa4Title: "Where is my selfie stored?",
+    qa4Body: "It is stored for matching and can be deleted upon request. See the privacy policy for details.",
     faqTitle: "FAQ",
     faq1Title: "How do you find the best match?",
     faq1Body: "We compare tone, color, and vibe similarity to find the closest photo.",
@@ -263,6 +285,7 @@ const I18N = {
     eyebrow: "selfie vibe match",
     heroTitle: "バイブピック セルフィー雰囲気マッチ",
     heroSubtitle: "今撮ったセルフィーで、いちばん雰囲気が合う写真を見せます。",
+    heroDefinition: "バイブピックは、今撮ったセルフィーから雰囲気が近い写真1枚をすぐに表示するウェブサービスです。",
     languageLabel: "言語",
     captureTitle: "今撮りセルフィー",
     capturePill: "Webカメラのみ",
@@ -311,6 +334,16 @@ const I18N = {
     aboutPoint1: "アップロードできるのは今撮ったセルフィーのみです。",
     aboutPoint2: "世界中のセルフィーから雰囲気が近いものを探します。",
     aboutPoint3: "マッチングや連絡はなく、写真のみを表示します。",
+    qaTitle: "バイブピックとはどんなサービスですか？",
+    qaPill: "Quick Q&A",
+    qa1Title: "バイブピックは無料ですか？",
+    qa1Body: "現在は無料で利用できます。セルフィーを撮影するとすぐに結果が表示されます。",
+    qa2Title: "どんな基準で写真を表示しますか？",
+    qa2Body: "色味・トーン・雰囲気の類似度で最も近い写真1枚を選びます。マッチングや連絡はありません。",
+    qa3Title: "結果が気に入らない場合は？",
+    qa3Body: "フィルターを変えるか、新しいセルフィーで再試行できます。セルフィーが増えるほど精度が上がります。",
+    qa4Title: "セルフィーはどこに保存されますか？",
+    qa4Body: "マッチングのために保存され、削除依頼が可能です。詳細はプライバシーポリシーをご確認ください。",
     faqTitle: "よくある質問",
     faq1Title: "どのようにマッチしますか？",
     faq1Body: "色味や雰囲気の類似度で最も近い写真を表示します。",
@@ -363,6 +396,7 @@ const I18N = {
     eyebrow: "selfie vibe match",
     heroTitle: "VibePick Match de vibra de selfie",
     heroSubtitle: "Tómate una selfie ahora y mira la foto con mejor vibra.",
+    heroDefinition: "VibePick es un servicio web que muestra al instante una sola foto con una vibra similar según tu selfie en vivo.",
     languageLabel: "Idioma",
     captureTitle: "Selfie instantánea",
     capturePill: "Solo cámara",
@@ -411,6 +445,16 @@ const I18N = {
     aboutPoint1: "Solo se permiten selfies en vivo (sin subir archivos).",
     aboutPoint2: "Buscamos en el pool global la vibra más cercana.",
     aboutPoint3: "Sin emparejar ni mensajes: solo la foto resultado.",
+    qaTitle: "¿Qué es VibePick?",
+    qaPill: "Quick Q&A",
+    qa1Title: "¿VibePick es gratis?",
+    qa1Body: "Sí, por ahora es gratis. Tómate una selfie en vivo y verás el resultado al instante.",
+    qa2Title: "¿Cómo eligen la foto?",
+    qa2Body: "Comparamos tono, color y vibra para encontrar la foto más parecida. Solo mostramos la foto, sin mensajes.",
+    qa3Title: "¿Y si no me gusta el resultado?",
+    qa3Body: "Prueba otros filtros o toma una nueva selfie. Cuantas más selfies haya, mejores serán los resultados.",
+    qa4Title: "¿Dónde se guarda mi selfie?",
+    qa4Body: "Se guarda para el match y puedes solicitar su eliminación. Consulta la política de privacidad para más detalles.",
     faqTitle: "Preguntas frecuentes",
     faq1Title: "¿Cómo encuentran el mejor match?",
     faq1Body: "Comparamos tono, color y vibra para hallar la foto más cercana.",
@@ -799,7 +843,7 @@ const updateHistory = (entries) => {
     const item = document.createElement("div");
     item.className = "history-item";
     item.innerHTML = `
-      <img src="${entry.image_path}" alt="${t("selfieAlt")}" />
+      <img src="${entry.image_path}" alt="${t("selfieAlt")}" loading="lazy" width="256" height="256" />
       <div>${genderLabel(entry.self_gender)}</div>
       <div>${toTitle(entry.self_continent)} ${toTitle(entry.self_country)}</div>
     `;
@@ -822,7 +866,7 @@ const updateResult = (match) => {
   }
   resultCard.querySelector("h3").textContent = t("resultMatchTitle");
   resultCard.querySelector("p").textContent = t("resultMatchBody");
-  resultPhoto.innerHTML = `<img src="${match.image_path}" alt="${t("matchAlt")}" />`;
+  resultPhoto.innerHTML = `<img src="${match.image_path}" alt="${t("matchAlt")}" loading="lazy" width="256" height="256" />`;
   const locationLabel = `${toTitle(match.self_continent)} ${toTitle(match.self_country)}`.trim();
   resultMeta.innerHTML = `
     <div>${t("resultMetaGenderLabel")}: ${genderLabel(match.self_gender)}</div>

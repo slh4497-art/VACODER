@@ -144,6 +144,13 @@ h1 {
   max-width: 480px;
 }
 
+.definition {
+  margin-top: 10px;
+  font-size: 0.95rem;
+  color: var(--muted);
+  max-width: 520px;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
